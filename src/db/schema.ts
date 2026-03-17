@@ -1,7 +1,7 @@
 import { datetime, int, mysqlEnum, mysqlTable, varchar } from "drizzle-orm/mysql-core";
 
 export const species = mysqlTable("Species", {
-  id: int("Id").primaryKey(),
+  id: int("Id").autoincrement().primaryKey(),
   speciesName: varchar("SpeciesName", { length: 255 }).notNull().unique(),
   latinName: varchar("LatinName", { length: 255 }).notNull().unique(),
 });
@@ -9,7 +9,7 @@ export const species = mysqlTable("Species", {
 const citiesEnum = mysqlEnum(["England", "Scotland", "Wales", "Northern Ireland"]);
 
 export const cities = mysqlTable("Cities", {
-  id: int("Id").primaryKey(),
+  id: int("Id").autoincrement().primaryKey(),
   cityName: varchar("CityName", { length: 255 }).notNull(),
   nation: citiesEnum.notNull(),
 });
