@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "csv-parser": "^3.2.0",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "mysql2": "^3.19.1",
