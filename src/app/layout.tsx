@@ -31,7 +31,14 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <header className="flex flex-row w-full justify-between px-4 py-2 border-b-4 border-sky-600 shadow-md">
+          <span className="text-3xl font-bold">ELANCO</span>
+          <h1 className="text-xl font-semibold">UK Tick Sightings</h1>
+          <div>
+            <span>placeholder</span>
+          </div>
+        </header>
+        <main className="flex flex-col w-full min-h-screen items-center">{children}</main>
       </body>
     </html>
   );
