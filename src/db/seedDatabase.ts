@@ -25,7 +25,7 @@ interface parsedSighting<T> {
 
 /**
  * Seeds the database with initial data from JSON files and CSV file.
- * 
+ *
  * Performs the following operations:
  * 1. Populates the species table with UK tick species data if empty
  * 2. Populates the cities table with UK cities data if empty
@@ -35,14 +35,14 @@ interface parsedSighting<T> {
  *    - Species name/latin name matching with LIKE matching for misspellings
  *    - City name matching with LIKE matching for misspellings
  *    - DateTime validation (currently only corrects time components if out of range)
- * 
+ *
  * @async
  * @returns {Promise<void>} A promise that resolves when all seeding operations complete
- * 
+ *
  * @remarks
  * - Cities and species are only seeded if their respective tables are empty to prevent duplicate entries
  * - Only processes sightings if the sightings table is empty
- * 
+ *
  * @todo Consider integrating towns and counties in future due to regions without city status
  */
 export const seedDatabase = async (): Promise<void> => {
@@ -58,10 +58,16 @@ export const seedDatabase = async (): Promise<void> => {
   // TODO: Consider integrating towns and counties in future due to regions without city status
   if ((await db.select().from(cities)).length === 0) {
     await db.insert(cities).values(
-      ukCities as {
-        cityName: string;
-        nation: "England" | "Scotland" | "Wales" | "Northern Ireland";
-      }[],
+      ukCities.map((city) => ({
+        cityName: city.cityName,
+        nation: city.nation as
+          | "England"
+          | "Scotland"
+          | "Wales"
+          | "Northern Ireland",
+        latitude: city.latitude.toFixed(4),
+        longitude: city.longitude.toFixed(4),
+      })),
     );
   }
 
