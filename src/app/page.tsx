@@ -22,7 +22,7 @@ const page = async () => {
     })
     .from(sightings)
     .innerJoin(species, eq(sightings.speciesId, species.id))
-    .groupBy(species.id);
+    .groupBy(species.id) as TickCardData[]; // Type assertion to fix Date | null error when we know date will always be present
 
   const horizonDataQuery: HorizonData[] = await db
     .select({
