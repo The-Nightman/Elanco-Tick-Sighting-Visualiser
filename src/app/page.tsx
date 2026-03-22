@@ -13,7 +13,7 @@ const page = async () => {
   const startOfYear = new Date(currentYear, 0, 1);
   const endOfYear = new Date(currentYear, 11, 31);
 
-  const tickCardData: TickCardData[] = await db
+  const tickCardDataQuery: TickCardData[] = await db
     .select({
       sightings: db.$count(sightings, eq(sightings.speciesId, species.id)),
       species: species.speciesName,
@@ -67,7 +67,7 @@ const page = async () => {
           />
         </div>
         <div>
-          {tickCardData.map((item, index) => (
+          {tickCardDataQuery.map((item, index) => (
             <TickCountCard
               key={`tickCard-${item.species}-${index}-TickCountCard`}
               data={item}
