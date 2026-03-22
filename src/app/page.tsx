@@ -1,14 +1,28 @@
 "use server";
+
 import { db } from "@/db";
+import { cities, sightings, species } from "@/db/schema";
+import { asc, between, eq, sql, max } from "drizzle-orm";
+import TickCountCard from "@/component/cards/TickCountCard";
 import HorizonChart from "./components/charts/HorizonChart";
+import { TickCardData } from "./interface/TickCardData";
 import { HorizonData } from "@/interfaces/HorizonData";
-import { cities, sightings } from "@/db/schema";
-import { asc, between, eq, sql } from "drizzle-orm";
 
 const page = async () => {
   const currentYear = new Date().getFullYear();
   const startOfYear = new Date(currentYear, 0, 1);
   const endOfYear = new Date(currentYear, 11, 31);
+
+  const tickCardData: TickCardData[] = await db
+    .select({
+      sightings: db.$count(sightings, eq(sightings.speciesId, species.id)),
+      species: species.speciesName,
+      latinName: species.latinName,
+      lastReported: max(sightings.sightingDate),
+    })
+    .from(sightings)
+    .innerJoin(species, eq(sightings.speciesId, species.id))
+    .groupBy(species.id);
 
   const horizonDataQuery: HorizonData[] = await db
     .select({
@@ -51,6 +65,14 @@ const page = async () => {
               })
               .sort((a, b) => a.cityName.localeCompare(b.cityName))}
           />
+        </div>
+        <div>
+          {tickCardData.map((item, index) => (
+            <TickCountCard
+              key={`tickCard-${item.species}-${index}-TickCountCard`}
+              data={item}
+            />
+          ))}
         </div>
       </div>
     </>
