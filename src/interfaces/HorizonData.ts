@@ -1,5 +1,6 @@
 export interface HorizonData {
+  cityId: number;
   cityName: string;
-  date: string;
+  date: Date;
   sightingCount:number;
 }
