@@ -3,9 +3,9 @@
 import { db } from "@/db";
 import { cities, sightings, species } from "@/db/schema";
 import { asc, between, eq, sql, max } from "drizzle-orm";
-import TickCountCard from "@/component/cards/TickCountCard";
+import TickCountCard from "@/app/components/cards/TickCountCard";
 import HorizonChart from "./components/charts/HorizonChart";
-import { TickCardData } from "./interface/TickCardData";
+import { TickCardData } from "../interfaces/TickCardData";
 import { HorizonData } from "@/interfaces/HorizonData";
 
 const page = async () => {

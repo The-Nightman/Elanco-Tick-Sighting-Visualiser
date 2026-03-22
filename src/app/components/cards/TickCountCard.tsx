@@ -1,4 +1,4 @@
-import { TickCardData } from "@/app/interface/TickCardData";
+import { TickCardData } from "@/interfaces/TickCardData";
 
 interface TickCountCardProps {
   data: TickCardData;
