@@ -10,7 +10,7 @@ const TabGroup = ({ children }: TabGroupProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <div className="shadow-md">
+    <section className="shadow-md">
       <div className="flex gap-2">
         {children.map((child, index) => (
           <button
@@ -23,7 +23,7 @@ const TabGroup = ({ children }: TabGroupProps) => {
         ))}
       </div>
       <div className="bg-neutral-800">{children[activeIndex]}</div>
-    </div>
+    </section>
   );
 };
 
