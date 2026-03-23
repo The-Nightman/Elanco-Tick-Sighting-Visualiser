@@ -12,20 +12,28 @@ const TickCountCard = ({ data }: TickCountCardProps) => {
   });
 
   return (
-    <div className="bg-sky-600 p-4 rounded shadow-md text-white max-w-sm">
-      <p className="mb-2">
-        <strong>Species:</strong> {data.species}
-      </p>
-      <p className="mb-2">
-        <strong>Latin Name:</strong> {data.latinName}
-      </p>
-      <p className="mb-2">
-        <strong>Count:</strong> {data.sightings}
-      </p>
-      <p>
-        <strong>Last Reported:</strong> {formatter.format(data.lastReported)}
-      </p>
-    </div>
+    <article className="bg-neutral-800 p-4 shadow-md text-white min-w-48">
+      <dl className="flex flex-col gap-4">
+        <div>
+          <dt className="sr-only">Species</dt>
+          <dd className="font-semibold">{data.species}</dd>
+          <dt className="sr-only">Latin Name</dt>
+          <dd className="text-neutral-300">{data.latinName}</dd>
+        </div>
+        <div>
+          <dt className="font-semibold">Sightings</dt>
+          <dd className="text-4xl font-bold">{data.sightings}</dd>
+        </div>
+        <div>
+          <dt>Last Reported</dt>
+          <dd>
+            <time dateTime={data.lastReported.toISOString()}>
+              {formatter.format(data.lastReported)}
+            </time>
+          </dd>
+        </div>
+      </dl>
+    </article>
   );
 };
 
