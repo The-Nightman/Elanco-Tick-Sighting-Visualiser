@@ -50,7 +50,7 @@ const Histogram = ({ data }: HistogramProps) => {
   }, [svgDimensions.height, svgDimensions.width]);
 
   return (
-    <svg ref={histogramSvgRef} className="w-full h-full">
+    <svg ref={histogramSvgRef} className="w-full h-full bg-white">
       <g>
         {data.map((d) => (
           <g key={d.date}>
