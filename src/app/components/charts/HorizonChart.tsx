@@ -126,7 +126,7 @@ const HorizonChart = ({ data }: HorizonChartProps) => {
   return (
     <svg
       ref={horizonSvgRef}
-      className="w-full"
+      className="w-full bg-white"
       style={{ height: `${svgDimensions.height}px` }} // Set dynamic height here
     >
       <g
