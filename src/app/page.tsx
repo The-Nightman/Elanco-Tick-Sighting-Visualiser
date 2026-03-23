@@ -9,6 +9,8 @@ import HorizonChart from "./components/charts/HorizonChart";
 import { HorizonData } from "@/interfaces/HorizonData";
 import { HistogramData } from "@/interfaces/HistogramData";
 import { TickCardData } from "@/interfaces/TickCardData";
+import TabGroup from "./components/Tabs/TabGroup/TabGroup";
+import Tab from "./components/Tabs/Tab/Tab";
 
 const page = async () => {
   const currentYear = new Date().getFullYear();
@@ -56,45 +58,54 @@ const page = async () => {
   return (
     <>
       <div className="flex flex-col w-full lg:max-w-3/4 self-center p-4">
-        <div className="w-full h-96 bg-gray-500/70">
-          <Histogram
-            // generate date strings for each month of the year to gap-fill database results so that all months are represented
-            data={Array.from({ length: 12 }, (_, m) => {
-              const date = new Date(currentYear, m, 1);
-              return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
-            }).map((date) => {
-              const matchingData = histogramData.find((d) => d.date === date);
-              return {
-                date,
-                count: matchingData ? matchingData.count : 0,
-              };
-            })}
-          />
-        </div>
-        <div className="w-full h-fit bg-gray-500/70">
-          <HorizonChart
-            // Include all cities in the data even with no sightings in the given timeframe
-            data={cityData
-              .flatMap((city) => {
-                const citySightings = horizonDataQuery.filter(
-                  (data) => data.cityId === city.id,
-                );
-                // Find sightings for this city, if none exist, return a default entry with 0 so it is included in the chart
-                if (citySightings.length === 0) {
-                  return [
-                    {
-                      cityId: city.id,
-                      cityName: city.cityName,
-                      date: startOfYear,
-                      sightingCount: 0,
-                    },
-                  ];
-                }
-                return citySightings;
-              })
-              .sort((a, b) => a.cityName.localeCompare(b.cityName))}
-          />
-        </div>
+        <TabGroup>
+          <Tab label="Histogram">
+            <div className="w-full h-96 bg-gray-500/70">
+              <Histogram
+                // generate date strings for each month of the year to gap-fill database results so that all months are represented
+                data={Array.from({ length: 12 }, (_, m) => {
+                  const date = new Date(currentYear, m, 1);
+                  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
+                }).map((date) => {
+                  const matchingData = histogramData.find(
+                    (d) => d.date === date,
+                  );
+                  return {
+                    date,
+                    count: matchingData ? matchingData.count : 0,
+                  };
+                })}
+              />
+            </div>
+          </Tab>
+          <Tab label="Horizon Chart">
+            <div className="w-full h-fit bg-gray-500/70">
+              <HorizonChart
+                // Include all cities in the data even with no sightings in the given timeframe
+                data={cityData
+                  .flatMap((city) => {
+                    const citySightings = horizonDataQuery.filter(
+                      (data) => data.cityId === city.id,
+                    );
+                    // Find sightings for this city, if none exist, return a default entry with 0 so it is included in the chart
+                    if (citySightings.length === 0) {
+                      return [
+                        {
+                          cityId: city.id,
+                          cityName: city.cityName,
+                          date: startOfYear,
+                          sightingCount: 0,
+                        },
+                      ];
+                    }
+                    return citySightings;
+                  })
+                  .sort((a, b) => a.cityName.localeCompare(b.cityName))}
+              />
+            </div>
+          </Tab>
+        </TabGroup>
+
         <div>
           {tickCardDataQuery.map((item, index) => (
             <TickCountCard
