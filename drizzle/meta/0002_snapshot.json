@@ -1,0 +1,193 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "bebc50df-1692-40fb-bfc0-ca8e4d6e4a76",
+  "prevId": "99773a7d-637e-4f75-b3e1-90089d4eecde",
+  "tables": {
+    "Cities": {
+      "name": "Cities",
+      "columns": {
+        "Id": {
+          "name": "Id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "CityName": {
+          "name": "CityName",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "nation": {
+          "name": "nation",
+          "type": "enum('England','Scotland','Wales','Northern Ireland')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "decimal(6,4)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "decimal(7,4)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "Cities_Id": {
+          "name": "Cities_Id",
+          "columns": [
+            "Id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "Sightings": {
+      "name": "Sightings",
+      "columns": {
+        "Id": {
+          "name": "Id",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sightingDate": {
+          "name": "sightingDate",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "SpeciesId": {
+          "name": "SpeciesId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "CityId": {
+          "name": "CityId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Sightings_SpeciesId_Species_Id_fk": {
+          "name": "Sightings_SpeciesId_Species_Id_fk",
+          "tableFrom": "Sightings",
+          "tableTo": "Species",
+          "columnsFrom": [
+            "SpeciesId"
+          ],
+          "columnsTo": [
+            "Id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "Sightings_CityId_Cities_Id_fk": {
+          "name": "Sightings_CityId_Cities_Id_fk",
+          "tableFrom": "Sightings",
+          "tableTo": "Cities",
+          "columnsFrom": [
+            "CityId"
+          ],
+          "columnsTo": [
+            "Id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "Sightings_Id": {
+          "name": "Sightings_Id",
+          "columns": [
+            "Id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "Species": {
+      "name": "Species",
+      "columns": {
+        "Id": {
+          "name": "Id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "SpeciesName": {
+          "name": "SpeciesName",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "LatinName": {
+          "name": "LatinName",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "Species_Id": {
+          "name": "Species_Id",
+          "columns": [
+            "Id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "Species_SpeciesName_unique": {
+          "name": "Species_SpeciesName_unique",
+          "columns": [
+            "SpeciesName"
+          ]
+        },
+        "Species_LatinName_unique": {
+          "name": "Species_LatinName_unique",
+          "columns": [
+            "LatinName"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    }
+  },
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {},
+    "indexes": {}
+  }
+}
