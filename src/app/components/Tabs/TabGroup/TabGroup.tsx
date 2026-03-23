@@ -16,7 +16,7 @@ const TabGroup = ({ children }: TabGroupProps) => {
           <button
             key={`tab-${child.props.label}-${index}`}
             onClick={() => setActiveIndex(index)}
-            className={`px-4 py-2 ${activeIndex === index ? "bg-neutral-800" : "bg-neutral-600"} text-white hover:bg-neutral-700 active:bg-neutral-500 cursor-pointer`}
+            className={`px-4 py-2 ${activeIndex === index ? "bg-neutral-800" : "bg-neutral-600"} text-white font-medium hover:bg-neutral-700 hover:underline active:bg-neutral-500 cursor-pointer`}
           >
             {child.props.label}
           </button>
