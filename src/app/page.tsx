@@ -73,29 +73,36 @@ const page = async () => {
             />
           ))}
         </section>
-
         <TabGroup>
-          <Tab label="Histogram">
-            <div className="w-full h-96 p-4">
-              <Histogram
-                // generate date strings for each month of the year to gap-fill database results so that all months are represented
-                data={Array.from({ length: 12 }, (_, m) => {
-                  const date = new Date(currentYear, m, 1);
-                  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
-                }).map((date) => {
-                  const matchingData = histogramData.find(
-                    (d) => d.date === date,
-                  );
-                  return {
-                    date,
-                    count: matchingData ? matchingData.count : 0,
-                  };
-                })}
-              />
+          <Tab label="Sightings over time">
+            <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
+              <h3 className="text-2xl text-white font-semibold">
+                Sightings through {currentYear}
+              </h3>
+              <div className="flex-1">
+                <Histogram
+                  // generate date strings for each month of the year to gap-fill database results so that all months are represented
+                  data={Array.from({ length: 12 }, (_, m) => {
+                    const date = new Date(currentYear, m, 1);
+                    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
+                  }).map((date) => {
+                    const matchingData = histogramData.find(
+                      (d) => d.date === date,
+                    );
+                    return {
+                      date,
+                      count: matchingData ? matchingData.count : 0,
+                    };
+                  })}
+                />
+              </div>
             </div>
           </Tab>
-          <Tab label="Horizon Chart">
-            <div className="w-full h-fit p-4">
+          <Tab label="Sightings by city">
+            <div className="w-full h-fit pt-4 pb-6 px-6 flex flex-col gap-3">
+              <h3 className="text-2xl text-white font-semibold">
+                Sightings through {currentYear} by City
+              </h3>
               <HorizonChart
                 // Include all cities in the data even with no sightings in the given timeframe
                 data={cityData
