@@ -3,16 +3,18 @@ import { useState } from "react";
 import { TabProps } from "../Tab/Tab";
 
 interface TabGroupProps {
-  children: React.ReactElement<TabProps>[];
+  children: React.ReactElement<TabProps>[] | React.ReactElement<TabProps>;
 }
 
 const TabGroup = ({ children }: TabGroupProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const childrenArr = Array.isArray(children) ? children : [children];
+
   return (
     <section className="shadow-md">
       <div className="flex gap-2">
-        {children.map((child, index) => (
+        {childrenArr.map((child, index) => (
           <button
             key={`tab-${child.props.label}-${index}`}
             onClick={() => setActiveIndex(index)}
@@ -22,7 +24,7 @@ const TabGroup = ({ children }: TabGroupProps) => {
           </button>
         ))}
       </div>
-      <div className="bg-neutral-800">{children[activeIndex]}</div>
+      <div className="bg-neutral-800">{childrenArr[activeIndex]}</div>
     </section>
   );
 };

@@ -11,6 +11,7 @@ import { HistogramData } from "@/interfaces/HistogramData";
 import { TickCardData } from "@/interfaces/TickCardData";
 import TabGroup from "./components/Tabs/TabGroup/TabGroup";
 import Tab from "./components/Tabs/Tab/Tab";
+import SearchBar from "./components/SearchBar/SearchBar";
 
 const page = async () => {
   const currentYear = new Date().getFullYear();
@@ -58,6 +59,7 @@ const page = async () => {
   return (
     <>
       <div className="flex flex-col w-full lg:max-w-3/4 self-center p-4 gap-8">
+        <SearchBar />
         <h2 className="text-4xl font-bold">
           <div>
             <span aria-hidden="true">UK </span>
@@ -65,7 +67,7 @@ const page = async () => {
             sightings
           </div>
         </h2>
-        <section className="flex max-w-full gap-4">
+        <section className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">
           {tickCardDataQuery.map((item, index) => (
             <TickCountCard
               key={`tickCard-${item.species}-${index}-TickCountCard`}
