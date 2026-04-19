@@ -203,8 +203,8 @@ const D3Map = () => {
   }, [sightingData]);
 
   return (
-    <div className="relative flex">
-      <svg ref={svgRef} width={width} height={height} />
+    <div className="relative flex w-full h-full max-w-full">
+      <svg ref={svgRef} className="w-full h-auto" />
       <MapControls setMapData={setSightingData} />
     </div>
   );
