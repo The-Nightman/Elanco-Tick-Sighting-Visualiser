@@ -5,9 +5,10 @@ import * as d3 from "d3";
 import { tile, tileWrap } from "d3-tile";
 import geoJson from "@/data/ltla2025.json";
 import { MapSightingData } from "@/interfaces/MapSightingData";
+import MapControls from "./MapControls";
 
-const width = 600;
-const height = 400;
+const width = 800;
+const height = 600;
 const tau = 2 * Math.PI; // Needed for mercator projection conversions
 
 const data = geoJson as GeoJSON.FeatureCollection; // 2025 Lower Tier Local Authorities data from ONS: https://onsdigital.github.io/uk-topojson/
@@ -19,17 +20,6 @@ const url = (x: number, y: number, z: number) =>
 const D3Map = () => {
   const [sightingData, setSightingData] = useState<MapSightingData[]>([]);
   const svgRef = useRef<SVGSVGElement | null>(null);
-
-  useEffect(() => {
-    // TODO: This may need to be passed from a parent component as map controls will dictate the query parameters
-    const apiQuery = async () => {
-      const res = await fetch(`/api/data/map/allSightings?start=${new Date().getFullYear()}-01-01&end=${new Date().getFullYear()}-12-31`);
-      const data: MapSightingData[] = await res.json();
-      setSightingData(data);
-    };
-
-    apiQuery();
-  }, []);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -212,7 +202,12 @@ const D3Map = () => {
     };
   }, [sightingData]);
 
-  return <svg ref={svgRef} width={width} height={height} />;
+  return (
+    <div className="relative flex">
+      <svg ref={svgRef} width={width} height={height} />
+      <MapControls setMapData={setSightingData} />
+    </div>
+  );
 };
 
 export default D3Map;
