@@ -12,6 +12,7 @@ import { TickCardData } from "@/interfaces/TickCardData";
 import TabGroup from "./components/Tabs/TabGroup/TabGroup";
 import Tab from "./components/Tabs/Tab/Tab";
 import SearchBar from "./components/SearchBar/SearchBar";
+import D3Map from "./components/Map/D3Map";
 
 const page = async () => {
   const currentYear = new Date().getFullYear();
@@ -58,7 +59,7 @@ const page = async () => {
 
   return (
     <>
-      <div className="flex flex-col w-full lg:max-w-3/4 self-center p-4 gap-8">
+      <div className="flex flex-col w-full lg:max-w-3/4 self-center p-4 gap-8 overflow-x-hidden">
         <SearchBar />
         <h2 className="text-4xl font-bold">
           <div>
@@ -67,6 +68,12 @@ const page = async () => {
             sightings
           </div>
         </h2>
+        <section className="flex flex-col max-w-full gap-4 overflow-x-scroll no-scrollbar justify-center bg-neutral-800 p-4">
+          <h3 className="text-2xl text-white font-semibold">
+            UK sighting map
+          </h3>
+          <D3Map />
+        </section>
         <section className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">
           {tickCardDataQuery.map((item, index) => (
             <TickCountCard
