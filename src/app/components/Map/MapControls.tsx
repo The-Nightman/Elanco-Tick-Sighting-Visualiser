@@ -63,7 +63,7 @@ const MapControls = ({ setMapData }: MapControlsProps) => {
   return (
     <div className="absolute top-0 right-0 flex h-full">
       <button
-        className="bg-neutral-800 w-6 h-12 rounded-l-xl self-center cursor-pointer"
+        className="bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-500 w-6 h-12 rounded-l-xl self-center cursor-pointer"
         aria-expanded={controlsState.visible}
         aria-controls="map-controls"
         aria-label={
