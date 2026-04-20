@@ -19,6 +19,7 @@ const page = async () => {
                 including areas such as the Channel Islands and Cornwall
               </li>
               <li>Hosts include small rodents, badgers and foxes</li>
+              <li>Pathogens include Borrelia burgdoferi, Francisella tularensis and Coxiella burneti</li>
             </ul>
           </div>
         </article>
@@ -29,6 +30,7 @@ const page = async () => {
           <ul className="list-disc list-inside">
             <li>Usually found in wetland areas, marshes and riverbanks</li>
             <li>Main hosts are water vole</li>
+            <li>Carries the pathogen Francisella tularensis</li>
           </ul>
           </div>
           <div className="flex justify-center items-center">
@@ -49,6 +51,7 @@ const page = async () => {
             </li>
             <li>Mainly located in Southern England</li>
             <li>Lives in bird nests and tree holes</li>
+            <li>Carries the pathogen tick-borne encephalitis virus</li>
           </ul>
           </div>
         </article>
@@ -59,6 +62,8 @@ const page = async () => {
           <ul className="list-disc list-inside">
             <li>Found all throughout the UK</li>
             <li>Mostly found on badgers, foxes and dogs</li>
+            <li>Pathogens carried on dogs include dermatitus pruritus, alopecia and anaemia</li>
+            <li>Other pathogens include Babesia missiroli and Pasteurella pestis</li>
           </ul>
           </div>
           <div className="flex justify-center items-center">
@@ -75,6 +80,7 @@ const page = async () => {
           <ul className="list-disc list-inside">
             <li>Hosts include pigeons, crows, doves and other birds</li>
             <li>Found in England and certain areas of Europe</li>
+            <li>Pathogens carried include Coxiella burneti, and the Bahig, Kemerovo and Matruh viruses</li>
           </ul>
           </div>
         </article>
@@ -92,10 +98,11 @@ const page = async () => {
               Is the most common tick found on cats, and second most common on
               dogs
             </li>
+            <li>Pathogens carried include Boriella and Lyme borrieliosis</li>
           </ul>
           </div>
           <div className="flex justify-center items-center">
-          <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <img src="/ixodes-hexagonus.jpg" alt="Hedgehog Tick" width={200} height={238}/>
           </div>
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
@@ -108,6 +115,7 @@ const page = async () => {
           <ul className="list-disc list-inside">
             <li>Hosted mainly by sand and house martins</li>
             <li>Majority of sightings in England</li>
+            <li>Has been associated with Russian spring-summer encephalitis</li>
           </ul>
           </div>
         </article>
@@ -118,6 +126,7 @@ const page = async () => {
           <ul className="list-disc list-inside">
             <li>Most common species found in the UK</li>
             <li>Hosts include a wide variety of wild and domestic animals</li>
+            <li>Some pathogens carried include Babesia divergens, babesia bovis, Rickettsia and Louping-ill virus</li>
           </ul>
           </div>
           <div className="flex justify-center items-center">
@@ -134,6 +143,7 @@ const page = async () => {
           <ul className="list-disc list-inside">
             <li>Found predominantly in coastal areas of England and Wales</li>
             <li>Lives in the burrows of birds in these areas</li>
+            <li>The razorbill carries the pathogen Uukuniemi serogroup virus</li>
           </ul>
           </div>
         </article>
@@ -147,6 +157,7 @@ const page = async () => {
               cormorants and shags
             </li>
             <li>Found in rocky areas of coastal England, France and Ireland</li>
+            <li>Pathogens are unknown</li>
           </ul>
           </div>
           <div className="flex justify-center items-center">
@@ -167,6 +178,7 @@ const page = async () => {
               predators
             </li>
             <li>This species is rare in the UK</li>
+            <li>Mostly associated with the Eyach virus</li>
           </ul>
           </div>
         </article>
@@ -178,6 +190,7 @@ const page = async () => {
             <li>Primarily uses bats as hosts</li>
             <li>Its long legs make it easy to distinguish</li>
             <li>Sighted across England, Scotland and Wales</li>
+            <li>Pathogens include the tick-borne encephalitis virus and Kul virus</li>
           </ul>
           </div>
           <div className="flex justify-center items-center">
@@ -186,7 +199,7 @@ const page = async () => {
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
-          <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <img src="/ixodes-uriae.jpg" alt="Seabird Tick" width={150} height={203}/>
           </div>
           <div>
           <h3 className="font-bold">Seabird Tick</h3>
@@ -194,6 +207,7 @@ const page = async () => {
           <ul className="list-disc list-inside">
             <li>Seabirds are the main hosts</li>
             <li>Extremely common from Cornwall to Shetland</li>
+            <li>Pathogens include Borriela burgdorferi</li>
           </ul>
           </div>
         </article>
@@ -204,6 +218,7 @@ const page = async () => {
           <ul className="list-disc list-inside">
             <li>Found widely across the UK</li>
             <li>Parasitises the surface layers of small burrowing animals</li>
+            <li>Some pathogens include tick-borne encephalitis and Francisella tularensis, but it is also associated with pathogens such as Babesia microti and Coxiella burneti</li>
           </ul>
           </div>
           <div className="flex justify-center items-center">
@@ -220,6 +235,7 @@ const page = async () => {
             <ul className="list-disc list-inside">
               <li>Parasite soley of birds, especially those nested on cliffs</li>
               <li>Recorded sightings mainly in nothern Enland and Scotland</li>
+              <li>Pathogens carried are not known</li>
             </ul>
           </div>
         </article>
@@ -231,10 +247,11 @@ const page = async () => {
               <li>Mostly found in southwest England and Wales, and recently Essex</li>
               <li>Parasitises sheep, cattle and birds</li>
               <li>Ornate scutum allows it to be easily distinguished</li>
+              <li>Some pathogens carried/associated include Babesia canis, Babesia ovis, Francisella tularensis and Brucella</li>
             </ul>
           </div>
           <div className="flex justify-center items-center">
-          <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <img src="/dermacentor-reticulatus.jpg" alt="Ornate Cow Tick" width={200} height={200}/>
           </div>
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
@@ -266,7 +283,7 @@ const page = async () => {
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
-          <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <img src="/argas-reflexus.jpg" alt="Pigeon Tick" width={200} height={267}/>
           </div>
           <div>
             <h3 className="font-bold">Pigeon Tick</h3>
