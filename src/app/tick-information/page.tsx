@@ -7,7 +7,10 @@ const page = async () => {
       <section className="space-y-3">
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
           <div>
             <h3 className="font-bold">Southern Rodent Tick</h3>
@@ -34,12 +37,18 @@ const page = async () => {
           </ul>
           </div>
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+            <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
           <div>
           <h3 className="font-bold">Tree-hole Tick</h3>
@@ -67,12 +76,18 @@ const page = async () => {
           </ul>
           </div>
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+            <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
           <div>
           <h3 className="font-bold">Passerine Tick</h3>
@@ -102,12 +117,18 @@ const page = async () => {
           </ul>
           </div>
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-hexagonus.jpg" alt="Hedgehog Tick" width={200} height={238}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
           <div>
           <h3 className="font-bold">Sand Martin Tick</h3>
@@ -130,12 +151,18 @@ const page = async () => {
           </ul>
           </div>
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
           <div>
           <h3 className="font-bold">Puffin Tick</h3>
@@ -161,12 +188,18 @@ const page = async () => {
           </ul>
           </div>
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
           <div>
           <h3 className="font-bold">Rabbit Tick</h3>
@@ -194,12 +227,18 @@ const page = async () => {
           </ul>
           </div>
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-uriae.jpg" alt="Seabird Tick" width={150} height={203}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
           <div>
           <h3 className="font-bold">Seabird Tick</h3>
@@ -222,12 +261,18 @@ const page = async () => {
           </ul>
           </div>
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
           <div>
             <h3 className="font-bold">Northern Bird Tick</h3>
@@ -251,12 +296,18 @@ const page = async () => {
             </ul>
           </div>
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/dermacentor-reticulatus.jpg" alt="Ornate Cow Tick" width={200} height={200}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
           <div>
             <h3 className="font-bold">Red Sheep Tick</h3>
@@ -278,12 +329,18 @@ const page = async () => {
             </ul>
           </div>
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
         </article>
         <article className="bg-neutral-800 text-2x1 text-white grid grid-cols-2 gap-4 p-2">
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/argas-reflexus.jpg" alt="Pigeon Tick" width={200} height={267}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
           <div>
             <h3 className="font-bold">Pigeon Tick</h3>
@@ -304,7 +361,10 @@ const page = async () => {
             </ul>
           </div>
           <div className="flex justify-center items-center">
+            <figure>
           <img src="/ixodes-ricinus.jpg" alt="Sheep Tick" width={260} height={195}/>
+          <figcaption className="italic text-center">Source:Wikipedia</figcaption>
+            </figure>
           </div>
         </article>
       </section>
