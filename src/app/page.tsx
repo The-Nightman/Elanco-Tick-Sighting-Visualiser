@@ -13,6 +13,7 @@ import TabGroup from "./components/Tabs/TabGroup/TabGroup";
 import Tab from "./components/Tabs/Tab/Tab";
 import SearchBar from "./components/SearchBar/SearchBar";
 import D3Map from "./components/Map/D3Map";
+import OverviewCardsHome from "./components/cards/OverViewCards/OverviewCardsHome";
 
 const page = async () => {
   const currentYear = new Date().getFullYear();
@@ -57,6 +58,142 @@ const page = async () => {
 
   const cityData = await db.select().from(cities);
 
+  const [overviewData] = await db
+    .select({
+      sightingsPastMonth: db.$count(
+        sightings,
+        between(
+          sightings.sightingDate,
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          new Date(),
+        ),
+      ),
+      sightingsPastQuarter: db.$count(
+        sightings,
+        between(
+          sightings.sightingDate,
+          new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+          new Date(),
+        ),
+      ),
+      sightingsPastYear: db.$count(
+        sightings,
+        between(
+          sightings.sightingDate,
+          new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
+          new Date(),
+        ),
+      ),
+      reportsThisWeek: db.$count(
+        sightings,
+        between(
+          sightings.sightingDate,
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          new Date(),
+        ),
+      ),
+    })
+    .from(sightings);
+
+  const [trendData] = await db
+    .select({
+      monthTrend: sql<string>`CASE
+      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 1 MONTH THEN 1 ELSE NULL END) >
+           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 3 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 1 MONTH THEN 1 ELSE NULL END)
+      THEN 'Increasing'
+      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 1 MONTH THEN 1 ELSE NULL END) <
+           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 3 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 1 MONTH THEN 1 ELSE NULL END)
+      THEN 'Decreasing'
+      ELSE 'Stable'
+    END`,
+      sixMonthTrend: sql<string>`CASE
+      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 6 MONTH THEN 1 ELSE NULL END) >
+           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 12 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 6 MONTH THEN 1 ELSE NULL END)
+      THEN 'Increasing'
+      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 6 MONTH THEN 1 ELSE NULL END) <
+           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 12 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 6 MONTH THEN 1 ELSE NULL END)
+      THEN 'Decreasing'
+      ELSE 'Stable'
+    END`,
+      yearTrend: sql<string>`CASE
+      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 1 YEAR THEN 1 ELSE NULL END) >
+           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 2 YEAR AND ${sightings.sightingDate} < NOW() - INTERVAL 1 YEAR THEN 1 ELSE NULL END)
+      THEN 'Increasing'
+      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 1 YEAR THEN 1 ELSE NULL END) <
+           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 2 YEAR AND ${sightings.sightingDate} < NOW() - INTERVAL 1 YEAR THEN 1 ELSE NULL END)
+      THEN 'Decreasing'
+      ELSE 'Stable'
+    END`,
+    })
+    .from(sightings);
+
+  const [peakSeason] = await db
+    .select({
+      quarter: sql<number>`QUARTER(${sightings.sightingDate})`,
+      totalSightings: sql<number>`SUM(1)`,
+    })
+    .from(sightings)
+    .where(sql`YEAR(${sightings.sightingDate}) = ${currentYear}`)
+    .groupBy(sql`QUARTER(${sightings.sightingDate})`)
+    .orderBy(sql`SUM(1) DESC`)
+    .limit(1);
+
+  const topRisingLocations = await db
+    .select({
+      location: cities.cityName,
+      recentCount: sql<number>`SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)`,
+      previousCount: sql<number>`SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)`,
+      rateOfChange: sql<number>`CASE
+      WHEN SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END) = 0 THEN NULL
+      ELSE (
+        (
+          SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END) -
+          SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)
+        ) /
+        SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)
+      ) * 100
+    END`,
+    })
+    .from(sightings)
+    .innerJoin(cities, eq(sightings.cityId, cities.id))
+    .groupBy(cities.cityName)
+    .orderBy(
+      sql`CASE
+      WHEN SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END) = 0 THEN NULL
+      ELSE (
+        (
+          SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END) -
+          SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)
+        ) /
+        SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)
+      ) * 100
+    END DESC`,
+    )
+    .limit(3);
+
+  const [yearMostAffectedSpecies] = await db
+    .select({
+      speciesName: species.speciesName,
+      sightingCount: sql<number>`COUNT(*)`,
+    })
+    .from(sightings)
+    .where(between(sightings.sightingDate, startOfYear, endOfYear))
+    .innerJoin(species, eq(sightings.speciesId, species.id))
+    .groupBy(species.speciesName)
+    .orderBy(sql`COUNT(*) DESC`)
+    .limit(1);
+
+  const [maxMostAffectedSpecies] = await db
+    .select({
+      speciesName: species.speciesName,
+      sightingCount: sql<number>`COUNT(*)`,
+    })
+    .from(sightings)
+    .innerJoin(species, eq(sightings.speciesId, species.id))
+    .groupBy(species.speciesName)
+    .orderBy(sql`COUNT(*) DESC`)
+    .limit(1);
+
   return (
     <>
       <div className="flex flex-col w-full lg:max-w-3/4 self-center p-4 gap-8 overflow-x-hidden">
@@ -69,9 +206,7 @@ const page = async () => {
           </div>
         </h2>
         <section className="flex flex-col max-w-full gap-4 overflow-x-scroll no-scrollbar justify-center bg-neutral-800 p-4">
-          <h3 className="text-2xl text-white font-semibold">
-            UK sighting map
-          </h3>
+          <h3 className="text-2xl text-white font-semibold">UK sighting map</h3>
           <D3Map />
         </section>
         <section className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">
@@ -81,6 +216,23 @@ const page = async () => {
               data={item}
             />
           ))}
+        </section>
+        <section>
+          <div className="flex bg-neutral-800 items-center gap-2 p-2 mb-2 border-b-sky-600 border-b-4">
+            <h3 className="text-2xl text-white font-semibold">Overview</h3>
+          </div>
+          <OverviewCardsHome
+            data={{
+              ...overviewData,
+              trendData,
+              peakSeason,
+              topRisingLocations: topRisingLocations.filter(
+                (loc) => loc.rateOfChange !== null,
+              ),
+              yearMostAffectedSpecies,
+              maxMostAffectedSpecies,
+            }}
+          />
         </section>
         <TabGroup>
           <Tab label="Sightings over time">
