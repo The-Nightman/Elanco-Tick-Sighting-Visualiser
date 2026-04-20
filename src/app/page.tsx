@@ -14,6 +14,7 @@ import Tab from "./components/Tabs/Tab/Tab";
 import SearchBar from "./components/SearchBar/SearchBar";
 import D3Map from "./components/Map/D3Map";
 import OverviewCardsHome from "./components/cards/OverViewCards/OverviewCardsHome";
+import Link from "next/link";
 
 const page = async () => {
   const currentYear = new Date().getFullYear();
@@ -209,13 +210,21 @@ const page = async () => {
           <h3 className="text-2xl text-white font-semibold">UK sighting map</h3>
           <D3Map />
         </section>
-        <section className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">
-          {tickCardDataQuery.map((item, index) => (
-            <TickCountCard
-              key={`tickCard-${item.species}-${index}-TickCountCard`}
-              data={item}
-            />
-          ))}
+        <section className="flex flex-col">
+          <div className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">
+            {tickCardDataQuery.map((item, index) => (
+              <TickCountCard
+                key={`tickCard-${item.species}-${index}-TickCountCard`}
+                data={item}
+              />
+            ))}
+          </div>
+          <Link
+            href="/tick-information"
+            className="text-lg text-blue-500 hover:underline font-medium "
+          >
+            Learn more about ticks species →
+          </Link>
         </section>
         <section>
           <div className="flex bg-neutral-800 items-center gap-2 p-2 mb-2 border-b-sky-600 border-b-4">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { seedDatabase } from "@/db/seedDatabase";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +33,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <header className="flex flex-row w-full justify-between px-4 py-2 border-b-4 border-sky-600 shadow-md">
-          <span className="text-3xl font-bold">ELANCO</span>
+          <Link href="/" className="text-3xl font-bold">
+            ELANCO
+          </Link>
           <h1 className="text-xl font-semibold">UK Tick Sightings</h1>
           <div>
             <span>placeholder</span>
