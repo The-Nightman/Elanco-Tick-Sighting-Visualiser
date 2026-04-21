@@ -15,6 +15,7 @@ import SearchBar from "./components/SearchBar/SearchBar";
 import D3Map from "./components/Map/D3Map";
 import OverviewCardsHome from "./components/cards/OverViewCards/OverviewCardsHome";
 import Link from "next/link";
+import DonwloadButton from "./components/Button/DonwloadButton";
 
 const page = async () => {
   const currentYear = new Date().getFullYear();
@@ -206,6 +207,10 @@ const page = async () => {
             sightings
           </div>
         </h2>
+        <DonwloadButton
+          apiUrl="/api/reports"
+          reportName="Ticks_Sightings_National"
+        />
         <section className="flex flex-col max-w-full gap-4 overflow-x-scroll no-scrollbar justify-center bg-neutral-800 p-4">
           <h3 className="text-2xl text-white font-semibold">UK sighting map</h3>
           <D3Map />

@@ -1,5 +1,6 @@
 "use server";
 
+import DonwloadButton from "@/app/components/Button/DonwloadButton";
 import OverviewCardsCity from "@/app/components/cards/OverViewCards/OverviewCardsCity";
 import TickCountCard from "@/app/components/cards/TickCountCard";
 import Histogram from "@/app/components/charts/histogram/Histogram";
@@ -148,7 +149,12 @@ const CityPage = async ({ params }: CityPageProps) => {
       totalSightings: sql<number>`SUM(1)`,
     })
     .from(sightings)
-    .where(and(sql`YEAR(${sightings.sightingDate}) = ${currentYear}`, eq(sightings.cityId, Number(cityId))))
+    .where(
+      and(
+        sql`YEAR(${sightings.sightingDate}) = ${currentYear}`,
+        eq(sightings.cityId, Number(cityId)),
+      ),
+    )
     .groupBy(sql`QUARTER(${sightings.sightingDate})`)
     .orderBy(sql`SUM(1) DESC`)
     .limit(1);
@@ -159,7 +165,12 @@ const CityPage = async ({ params }: CityPageProps) => {
       sightingCount: sql<number>`COUNT(*)`,
     })
     .from(sightings)
-    .where(and(between(sightings.sightingDate, startOfYear, endOfYear), eq(sightings.cityId, Number(cityId))))
+    .where(
+      and(
+        between(sightings.sightingDate, startOfYear, endOfYear),
+        eq(sightings.cityId, Number(cityId)),
+      ),
+    )
     .innerJoin(species, eq(sightings.speciesId, species.id))
     .groupBy(species.speciesName)
     .orderBy(sql`COUNT(*) DESC`)
@@ -171,7 +182,12 @@ const CityPage = async ({ params }: CityPageProps) => {
       sightingCount: sql<number>`COUNT(*)`,
     })
     .from(sightings)
-    .where(and(eq(sightings.cityId, Number(cityId)), eq(sightings.speciesId, species.id)))
+    .where(
+      and(
+        eq(sightings.cityId, Number(cityId)),
+        eq(sightings.speciesId, species.id),
+      ),
+    )
     .innerJoin(species, eq(sightings.speciesId, species.id))
     .groupBy(species.speciesName)
     .orderBy(sql`COUNT(*) DESC`)
@@ -183,6 +199,10 @@ const CityPage = async ({ params }: CityPageProps) => {
         <h2 className="text-4xl font-bold">
           <div>{cityData.cityName} sightings</div>
         </h2>
+        <DonwloadButton
+          apiUrl={`/api/reports?city=${cityId}`}
+          reportName={`Ticks_Sightings_${cityData.cityName.replace(/\s/g, "_")}.csv`}
+        />
         <section className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">
           {tickCardDataQuery.map((item, index) => (
             <TickCountCard
@@ -191,7 +211,6 @@ const CityPage = async ({ params }: CityPageProps) => {
             />
           ))}
         </section>
-
         <section>
           <div className="flex bg-neutral-800 items-center gap-2 p-2 mb-2 border-b-sky-600 border-b-4">
             <h3 className="text-2xl text-white font-semibold">Overview</h3>
@@ -206,7 +225,7 @@ const CityPage = async ({ params }: CityPageProps) => {
             }}
           />
         </section>
-        
+
         <TabGroup>
           <Tab label="Sightings over time">
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
