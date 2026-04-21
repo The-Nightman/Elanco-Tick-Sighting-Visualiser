@@ -15,7 +15,7 @@ import SearchBar from "./components/SearchBar/SearchBar";
 import D3Map from "./components/Map/D3Map";
 import OverviewCardsHome from "./components/cards/OverViewCards/OverviewCardsHome";
 import Link from "next/link";
-import DonwloadButton from "./components/Button/DonwloadButton";
+import DownloadButton from "./components/Button/DownloadButton";
 
 const page = async () => {
   const currentYear = new Date().getFullYear();
@@ -207,7 +207,7 @@ const page = async () => {
             sightings
           </div>
         </h2>
-        <DonwloadButton
+        <DownloadButton
           apiUrl="/api/data/reports"
           reportName="Ticks_Sightings_National"
         />
