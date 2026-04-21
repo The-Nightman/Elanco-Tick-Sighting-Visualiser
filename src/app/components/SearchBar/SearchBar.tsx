@@ -1,6 +1,6 @@
 "use client";
 
-import useDebounce from "@/app/hooks/useDebounce";
+import useDebounce from "@/hooks/useDebounce";
 import { CityData } from "@/interfaces/CityData";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
