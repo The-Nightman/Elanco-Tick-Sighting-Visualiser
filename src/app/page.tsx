@@ -3,19 +3,19 @@
 import { db } from "@/db";
 import { cities, sightings, species } from "@/db/schema";
 import { asc, between, eq, sql, max } from "drizzle-orm";
-import TickCountCard from "./components/cards/TickCountCard";
-import Histogram from "./components/charts/histogram/Histogram";
-import HorizonChart from "./components/charts/HorizonChart";
+import TickCountCard from "@/components/cards/TickCountCard";
+import Histogram from "@/components/charts/histogram/Histogram";
+import HorizonChart from "@/components/charts/HorizonChart";
 import { HorizonData } from "@/interfaces/HorizonData";
 import { HistogramData } from "@/interfaces/HistogramData";
 import { TickCardData } from "@/interfaces/TickCardData";
-import TabGroup from "./components/Tabs/TabGroup/TabGroup";
-import Tab from "./components/Tabs/Tab/Tab";
-import SearchBar from "./components/SearchBar/SearchBar";
-import D3Map from "./components/Map/D3Map";
-import OverviewCardsHome from "./components/cards/OverViewCards/OverviewCardsHome";
+import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
+import Tab from "@/components/Tabs/Tab/Tab";
+import SearchBar from "@/components/SearchBar/SearchBar";
+import D3Map from "@/components/Map/D3Map";
+import OverviewCardsHome from "@/components/cards/OverViewCards/OverviewCardsHome";
 import Link from "next/link";
-import DownloadButton from "./components/Button/DownloadButton";
+import DownloadButton from "@/components/Button/DownloadButton";
 
 const page = async () => {
   const currentYear = new Date().getFullYear();

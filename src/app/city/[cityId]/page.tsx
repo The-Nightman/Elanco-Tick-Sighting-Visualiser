@@ -1,11 +1,11 @@
 "use server";
 
-import DownloadButton from "@/app/components/Button/DownloadButton";
-import OverviewCardsCity from "@/app/components/cards/OverViewCards/OverviewCardsCity";
-import TickCountCard from "@/app/components/cards/TickCountCard";
-import Histogram from "@/app/components/charts/histogram/Histogram";
-import Tab from "@/app/components/Tabs/Tab/Tab";
-import TabGroup from "@/app/components/Tabs/TabGroup/TabGroup";
+import DownloadButton from "@/components/Button/DownloadButton";
+import OverviewCardsCity from "@/components/cards/OverViewCards/OverviewCardsCity";
+import TickCountCard from "@/components/cards/TickCountCard";
+import Histogram from "@/components/charts/histogram/Histogram";
+import Tab from "@/components/Tabs/Tab/Tab";
+import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
 import { db } from "@/db";
 import { cities, sightings, species } from "@/db/schema";
 import { HistogramData } from "@/interfaces/HistogramData";
