@@ -200,7 +200,7 @@ const CityPage = async ({ params }: CityPageProps) => {
           <div>{cityData.cityName} sightings</div>
         </h2>
         <DonwloadButton
-          apiUrl={`/api/reports?city=${cityId}`}
+          apiUrl={`/api/data/reports?city=${cityId}`}
           reportName={`Ticks_Sightings_${cityData.cityName.replace(/\s/g, "_")}.csv`}
         />
         <section className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">

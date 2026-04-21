@@ -208,7 +208,7 @@ const page = async () => {
           </div>
         </h2>
         <DonwloadButton
-          apiUrl="/api/reports"
+          apiUrl="/api/data/reports"
           reportName="Ticks_Sightings_National"
         />
         <section className="flex flex-col max-w-full gap-4 overflow-x-scroll no-scrollbar justify-center bg-neutral-800 p-4">
