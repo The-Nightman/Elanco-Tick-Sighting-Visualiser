@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { cities, sightings, species } from "@/db/schema";
 import { asc, between, eq, sql, max } from "drizzle-orm";
-import TickCountCard from "@/components/cards/TickCountCard";
+import TickCountCard from "@/components/Cards/TickCountCard/TickCountCard";
 import Histogram from "@/components/charts/histogram/Histogram";
 import HorizonChart from "@/components/charts/HorizonChart";
 import { HorizonData } from "@/interfaces/HorizonData";
@@ -13,7 +13,7 @@ import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
 import Tab from "@/components/Tabs/Tab/Tab";
 import SearchBar from "@/components/SearchBar/SearchBar";
 import D3Map from "@/components/Map/D3Map";
-import OverviewCardsHome from "@/components/cards/OverViewCards/OverviewCardsHome";
+import OverviewCardsHome from "@/components/Cards/OverViewCards/OverviewCardsHome";
 import Link from "next/link";
 import DownloadButton from "@/components/Button/DownloadButton";
 

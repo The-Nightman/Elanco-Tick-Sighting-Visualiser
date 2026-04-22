@@ -1,8 +1,8 @@
 "use server";
 
 import DownloadButton from "@/components/Button/DownloadButton";
-import OverviewCardsCity from "@/components/cards/OverViewCards/OverviewCardsCity";
-import TickCountCard from "@/components/cards/TickCountCard";
+import OverviewCardsCity from "@/components/Cards/OverViewCards/OverviewCardsCity";
+import TickCountCard from "@/components/Cards/TickCountCard/TickCountCard";
 import Histogram from "@/components/charts/histogram/Histogram";
 import Tab from "@/components/Tabs/Tab/Tab";
 import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
