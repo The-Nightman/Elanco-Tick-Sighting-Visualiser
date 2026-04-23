@@ -1,7 +1,6 @@
 import { JSX } from "react";
 
 const OverviewCardsCity = ({ data }: { data: any }) => {
-  console.log("OverviewCards data:", data);
 
   const trendIcons: Record<string, JSX.Element> = {
     Increasing: (
