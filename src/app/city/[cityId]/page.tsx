@@ -1,11 +1,11 @@
 "use server";
 
-import DonwloadButton from "@/app/components/Button/DonwloadButton";
-import OverviewCardsCity from "@/app/components/cards/OverViewCards/OverviewCardsCity";
-import TickCountCard from "@/app/components/cards/TickCountCard";
-import Histogram from "@/app/components/charts/histogram/Histogram";
-import Tab from "@/app/components/Tabs/Tab/Tab";
-import TabGroup from "@/app/components/Tabs/TabGroup/TabGroup";
+import DownloadButton from "@/components/Button/DownloadButton";
+import OverviewCardsCity from "@/components/Cards/OverViewCards/OverviewCardsCity";
+import TickCountCard from "@/components/Cards/TickCountCard/TickCountCard";
+import Histogram from "@/components/Charts/Histogram/Histogram";
+import Tab from "@/components/Tabs/Tab/Tab";
+import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
 import { db } from "@/db";
 import { cities, sightings, species } from "@/db/schema";
 import { HistogramData } from "@/interfaces/HistogramData";
@@ -199,8 +199,8 @@ const CityPage = async ({ params }: CityPageProps) => {
         <h2 className="text-4xl font-bold">
           <div>{cityData.cityName} sightings</div>
         </h2>
-        <DonwloadButton
-          apiUrl={`/api/reports?city=${cityId}`}
+        <DownloadButton
+          apiUrl={`/api/data/reports?city=${cityId}`}
           reportName={`Ticks_Sightings_${cityData.cityName.replace(/\s/g, "_")}.csv`}
         />
         <section className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">
@@ -225,7 +225,6 @@ const CityPage = async ({ params }: CityPageProps) => {
             }}
           />
         </section>
-
         <TabGroup>
           <Tab label="Sightings over time">
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">

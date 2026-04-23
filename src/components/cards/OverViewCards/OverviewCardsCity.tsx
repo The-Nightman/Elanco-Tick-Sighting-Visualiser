@@ -1,7 +1,6 @@
 import { JSX } from "react";
 
-const OverviewCardsHome = ({ data }: { data: any }) => {
-  console.log("OverviewCards data:", data);
+const OverviewCardsCity = ({ data }: { data: any }) => {
 
   const trendIcons: Record<string, JSX.Element> = {
     Increasing: (
@@ -172,7 +171,7 @@ const OverviewCardsHome = ({ data }: { data: any }) => {
       </article>
 
       <article className="flex flex-col w-full lg:basis-[calc(50%-0.5rem)] min-h-48 bg-neutral-800 p-4 rounded justify-between">
-        <h4 className="text-2xl text-white font-semibold">National trend</h4>
+        <h4 className="text-2xl text-white font-semibold">Local trend</h4>
         <div className="flex justify-between gap-4 px-2 flex-wrap">
           <p className="flex flex-col">
             <span className="text-lg font-medium text-gray-300">Monthly:</span>
@@ -211,33 +210,14 @@ const OverviewCardsHome = ({ data }: { data: any }) => {
         <h4 className="text-2xl text-white font-semibold">Peak season</h4>
         <p className="text-4xl font-bold text-sky-600">
           <span aria-hidden>
-            {data.peakSeason.quarter ? `Q${data.peakSeason.quarter}` : "N/A"}
+            {data.peakSeason?.quarter ? `Q${data.peakSeason.quarter}` : "N/A"}
           </span>
           <span className="sr-only">
-            {data.peakSeason.quarter
+            {data.peakSeason?.quarter
               ? `Quarter ${data.peakSeason.quarter}`
               : "N/A"}
           </span>
         </p>
-      </article>
-
-      <article className="flex flex-col w-full lg:basis-[calc(50%-0.5rem)] min-h-56 bg-neutral-800 p-4 rounded justify-between">
-        <h4 className="flex flex-col text-2xl text-white font-semibold">
-          <span>Fastest rising areas</span>
-          <span className="text-lg font-medium text-gray-300">
-            Top 3 in order of highest to lowest
-          </span>
-        </h4>
-        {data.topRisingLocations.map((loc: any) => (
-          <p key={loc.location} className="text-xl font-medium text-white">
-            {loc.location}
-          </p>
-        ))}
-        {data.topRisingLocations.length === 0 && (
-          <p className="text-xl font-bold text-white">
-            No significant increases
-          </p>
-        )}
       </article>
 
       <article className="flex flex-col w-full lg:basis-[calc(50%-0.5rem)] min-h-48 bg-neutral-800 p-4 rounded justify-between">
@@ -268,7 +248,7 @@ const OverviewCardsHome = ({ data }: { data: any }) => {
         </div>
       </article>
 
-      <article className="flex flex-col w-full min-h-48 bg-neutral-800 p-4 rounded justify-between">
+      <article className="flex flex-col w-full lg:basis-[calc(50%-0.5rem)] min-h-48 bg-neutral-800 p-4 rounded justify-between">
         <h4 className="text-2xl text-white font-semibold">
           Invasive species reported
         </h4>
@@ -280,4 +260,4 @@ const OverviewCardsHome = ({ data }: { data: any }) => {
   );
 };
 
-export default OverviewCardsHome;
+export default OverviewCardsCity;

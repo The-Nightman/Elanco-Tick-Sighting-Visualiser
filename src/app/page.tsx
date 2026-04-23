@@ -3,19 +3,19 @@
 import { db } from "@/db";
 import { cities, sightings, species } from "@/db/schema";
 import { asc, between, eq, sql, max } from "drizzle-orm";
-import TickCountCard from "./components/cards/TickCountCard";
-import Histogram from "./components/charts/histogram/Histogram";
-import HorizonChart from "./components/charts/HorizonChart";
+import TickCountCard from "@/components/Cards/TickCountCard/TickCountCard";
+import Histogram from "@/components/Charts/Histogram/Histogram";
+import HorizonChart from "@/components/Charts/HorizonChart/HorizonChart";
 import { HorizonData } from "@/interfaces/HorizonData";
 import { HistogramData } from "@/interfaces/HistogramData";
 import { TickCardData } from "@/interfaces/TickCardData";
-import TabGroup from "./components/Tabs/TabGroup/TabGroup";
-import Tab from "./components/Tabs/Tab/Tab";
-import SearchBar from "./components/SearchBar/SearchBar";
-import D3Map from "./components/Map/D3Map";
-import OverviewCardsHome from "./components/cards/OverViewCards/OverviewCardsHome";
+import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
+import Tab from "@/components/Tabs/Tab/Tab";
+import SearchBar from "@/components/SearchBar/SearchBar";
+import D3Map from "@/components/Map/D3Map";
+import OverviewCardsHome from "@/components/Cards/OverViewCards/OverviewCardsHome";
 import Link from "next/link";
-import DonwloadButton from "./components/Button/DonwloadButton";
+import DownloadButton from "@/components/Button/DownloadButton";
 
 const page = async () => {
   const currentYear = new Date().getFullYear();
@@ -207,8 +207,8 @@ const page = async () => {
             sightings
           </div>
         </h2>
-        <DonwloadButton
-          apiUrl="/api/reports"
+        <DownloadButton
+          apiUrl="/api/data/reports"
           reportName="Ticks_Sightings_National"
         />
         <section className="flex flex-col max-w-full gap-4 overflow-x-scroll no-scrollbar justify-center bg-neutral-800 p-4">

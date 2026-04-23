@@ -7,7 +7,7 @@ interface DownloadButtonProps {
   reportName: string;
 }
 
-const DonwloadButton = ({ apiUrl, reportName }: DownloadButtonProps) => {
+const DownloadButton = ({ apiUrl, reportName }: DownloadButtonProps) => {
   const linkRef = useRef<HTMLAnchorElement>(null);
 
   const handleDownload = async () => {
@@ -37,4 +37,4 @@ const DonwloadButton = ({ apiUrl, reportName }: DownloadButtonProps) => {
   );
 };
 
-export default DonwloadButton;
+export default DownloadButton;
