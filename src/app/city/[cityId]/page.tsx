@@ -3,7 +3,7 @@
 import DownloadButton from "@/components/Button/DownloadButton";
 import OverviewCardsCity from "@/components/Cards/OverViewCards/OverviewCardsCity";
 import TickCountCard from "@/components/Cards/TickCountCard/TickCountCard";
-import Histogram from "@/components/charts/histogram/Histogram";
+import Histogram from "@/components/Charts/Histogram/Histogram";
 import Tab from "@/components/Tabs/Tab/Tab";
 import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
 import { db } from "@/db";
