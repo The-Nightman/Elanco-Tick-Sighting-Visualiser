@@ -16,6 +16,8 @@ import D3Map from "@/components/Map/D3Map";
 import OverviewCardsHome from "@/components/Cards/OverViewCards/OverviewCardsHome";
 import Link from "next/link";
 import DownloadButton from "@/components/Button/DownloadButton";
+import { StackedHistogramData } from "@/interfaces/StackedHistogramData";
+import HistogramStacked from "@/components/Charts/HistogramStacked/HistorgramStacked";
 
 const page = async () => {
   const currentYear = new Date().getFullYear();
@@ -44,6 +46,33 @@ const page = async () => {
     .where(between(sightings.sightingDate, startOfYear, endOfYear))
     .groupBy(histogramMonthBucket)
     .orderBy(asc(histogramMonthBucket));
+
+  const stackedHistogramData: StackedHistogramData[] = await db
+    .select({
+      date: histogramMonthBucket,
+      speciesName: species.speciesName,
+      count: sql<number>`COUNT(*)`,
+    })
+    .from(sightings)
+    .innerJoin(species, eq(sightings.speciesId, species.id))
+    .where(between(sightings.sightingDate, startOfYear, endOfYear))
+    .groupBy(histogramMonthBucket, species.speciesName)
+    .orderBy(asc(histogramMonthBucket), asc(species.speciesName))
+    .then((data) => {
+      const groupedData: Record<
+        string,
+        { date: string; data: { speciesName: string; count: number }[] }
+      > = {};
+
+      data.forEach(({ date, speciesName, count }) => {
+        if (!groupedData[date]) {
+          groupedData[date] = { date, data: [] };
+        }
+        groupedData[date].data.push({ speciesName, count });
+      });
+
+      return Object.values(groupedData);
+    });
 
   const horizonDataQuery: HorizonData[] = await db
     .select({
@@ -267,6 +296,30 @@ const page = async () => {
                     return {
                       date,
                       count: matchingData ? matchingData.count : 0,
+                    };
+                  })}
+                />
+              </div>
+            </div>
+          </Tab>
+          <Tab label="Sightings by species">
+            <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
+              <h3 className="text-2xl text-white font-semibold">
+                Sightings by species through {currentYear}
+              </h3>
+              <div className="flex-1">
+                <HistogramStacked
+                  // generate date strings for each month of the year to gap-fill database results so that all months are represented
+                  data={Array.from({ length: 12 }, (_, m) => {
+                    const date = new Date(currentYear, m, 1);
+                    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
+                  }).map((date) => {
+                    const matchingData = stackedHistogramData.find(
+                      (d) => d.date === date,
+                    );
+                    return {
+                      date,
+                      data: matchingData ? matchingData.data : [],
                     };
                   })}
                 />
