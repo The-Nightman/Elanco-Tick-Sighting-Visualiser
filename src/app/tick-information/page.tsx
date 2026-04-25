@@ -13,7 +13,7 @@ const page = async () => {
               <figure className="relative">
                 <img
                   src="/ixodes-acuminatus.jpg"
-                  alt="Sheep Tick"
+                  alt="Southern Rodent Tick"
                   width={260}
                   height={195}
                 />
@@ -24,7 +24,7 @@ const page = async () => {
             </div>
             <div>
               <h3 className="font-bold">Southern Rodent Tick</h3>
-              <span className="italic"> Ixodes Acuminatus</span>
+              <span className="italic">Ixodes Acuminatus</span>
               <ul className="list-disc list-inside">
                 <li>Normally live in burrows of its hosts</li>
                 <li>
@@ -140,9 +140,7 @@ const page = async () => {
                   height={195}
                 />
                 <figcaption className="absolute bottom-0 left-0 w-full bg-neutral-800/70 italic text-white text-center">
-                  <a href="https://creativecommons.org/licenses/by/4.0/">
-                    &copy;carnifex CC BY 4.0
-                  </a>
+                  &copy; carnifex (CC BY 4.0)
                 </figcaption>
               </figure>
             </div>
@@ -189,9 +187,7 @@ const page = async () => {
                   height={238}
                 />
                 <figcaption className="absolute bottom-0 left-0 w-full bg-neutral-800/70 italic text-white text-center">
-                  <a href="https://creativecommons.org/licenses/by-sa/2.5/">
-                    &copy;André Karwath 2005 CC BY-SA 2.5
-                  </a>
+                    &copy; André Karwath 2005 (CC BY-SA 2.5)
                 </figcaption>
               </figure>
             </div>
@@ -245,7 +241,7 @@ const page = async () => {
               <figure className="relative">
                 <img
                   src="/ixodes-ricinus2.jpg"
-                  alt="Sheep Tick"
+                  alt="Sheep/Deer Tick"
                   width={260}
                   height={195}
                 />
@@ -322,13 +318,13 @@ const page = async () => {
             <div className="flex justify-center items-center">
               <figure className="relative">
                 <img
-                  src="/ixodes-ricinus2.jpg"
+                  src="/ixodes-ventalloi.jpg"
                   alt="Rabbit Tick"
                   width={260}
                   height={195}
                 />
                 <figcaption className="absolute bottom-0 left-0 w-full bg-neutral-800/70 italic text-white text-center">
-                  &copy; ESCCAP UK
+                  &copy; I. ventalloi — Santos & Santos-Silva 2018 (CC BY 3.0)
                 </figcaption>
               </figure>
             </div>
@@ -388,9 +384,7 @@ const page = async () => {
                   height={203}
                 />
                 <figcaption className="absolute bottom-0 left-0 w-full bg-neutral-800/70 italic text-white text-center">
-                  <a href="https://creativecommons.org/licenses/by-sa/4.0/">
-                    &copy;Birgit Rhode 2019 CC BY-SA 4.0
-                  </a>
+                    &copy;Birgit Rhode 2019 (CC BY-SA 4.0)
                 </figcaption>
               </figure>
             </div>
@@ -494,7 +488,7 @@ const page = async () => {
                   height={200}
                 />
                 <figcaption className="absolute bottom-0 left-0 w-full bg-neutral-800/70 italic text-white text-center">
-                  Source:Wikipedia
+                  &copy; ESCCAP UK
                 </figcaption>
               </figure>
             </div>
@@ -544,13 +538,13 @@ const page = async () => {
             <div className="flex justify-center items-center">
               <figure className="relative">
                 <img
-                  src="/ixodes-ricinus2.jpg"
+                  src="/carios-maritimus.jpg"
                   alt="Marine Argasid Tick"
                   width={260}
                   height={195}
                 />
                 <figcaption className="absolute bottom-0 left-0 w-full bg-neutral-800/70 italic text-white text-center">
-                  &copy; ESCCAP UK
+                  &copy; Jody Green, iNaturalist (CC BY 4.0)
                 </figcaption>
               </figure>
             </div>
@@ -567,9 +561,7 @@ const page = async () => {
                   height={267}
                 />
                 <figcaption className="absolute bottom-0 left-0 w-full bg-neutral-800/70 italic text-white text-center">
-                  <a href="https://creativecommons.org/licenses/by/4.0/">
-                    &copy;Mario Bassini 2015 CC BY 4.0
-                  </a>
+                    &copy; Mario Bassini 2015 (CC BY 4.0)
                 </figcaption>
               </figure>
             </div>
@@ -599,13 +591,13 @@ const page = async () => {
             <div className="flex justify-center items-center">
               <figure className="relative">
                 <img
-                  src="/ixodes-ricinus2.jpg"
+                  src="/argas-vespertilionis.jpg"
                   alt="Blyborough Tick"
                   width={260}
                   height={195}
                 />
                 <figcaption className="absolute bottom-0 left-0 w-full bg-neutral-800/70 italic text-white text-center">
-                  &copy; ESCCAP UK
+                  &copy; ponpon42, iNaturalist (CC BY 4.0)
                 </figcaption>
               </figure>
             </div>
