@@ -1,7 +1,11 @@
+import { OverviewCardsCityData } from "@/interfaces/OverviewCardsCityData";
 import { JSX } from "react";
 
-const OverviewCardsCity = ({ data }: { data: any }) => {
+interface OverviewCardsCityProps {
+  data: OverviewCardsCityData;
+}
 
+const OverviewCardsCity = ({ data }: OverviewCardsCityProps) => {
   const trendIcons: Record<string, JSX.Element> = {
     Increasing: (
       <svg
@@ -136,90 +140,115 @@ const OverviewCardsCity = ({ data }: { data: any }) => {
               Past month:
             </span>
             <span className="text-4xl font-bold text-sky-600">
-              {data.sightingsPastMonth}
+              {data.sightingsReports.sightingsPastMonth}
             </span>
           </p>
-
           <p className="flex flex-col">
             <span className="text-lg font-medium text-gray-300">
               Past quarter:
             </span>
             <span className="text-4xl font-bold text-sky-600">
-              {data.sightingsPastQuarter}
+              {data.sightingsReports.sightingsPastQuarter}
             </span>
           </p>
-
           <p className="flex flex-col">
             <span className="text-lg font-medium text-gray-300">
               Past year:
             </span>
             <span className="text-4xl font-bold text-sky-600">
-              {data.sightingsPastYear}
+              {data.sightingsReports.sightingsPastYear}
             </span>
           </p>
         </div>
       </article>
-
       <article className="flex flex-col w-full lg:basis-[calc(50%-0.5rem)] min-h-48 bg-neutral-800 p-4 rounded justify-between">
         <h4 className="text-2xl text-white font-semibold">Reports this week</h4>
         <p className="flex flex-col-reverse text-4xl font-bold text-sky-600">
-          <span>{data.reportsThisWeek}</span>
+          <span>{data.sightingsReports.reportsThisWeek}</span>
           <span className="text-lg font-medium text-gray-300">
             Sightings reported
           </span>
         </p>
       </article>
-
       <article className="flex flex-col w-full lg:basis-[calc(50%-0.5rem)] min-h-48 bg-neutral-800 p-4 rounded justify-between">
         <h4 className="text-2xl text-white font-semibold">Local trend</h4>
         <div className="flex justify-between gap-4 px-2 flex-wrap">
           <p className="flex flex-col">
             <span className="text-lg font-medium text-gray-300">Monthly:</span>
             <span
-              className={`text-xl font-bold ${data.trendData.monthTrend === "Increasing" ? "text-red-500" : data.trendData.monthTrend === "Decreasing" ? "text-green-500" : "text-sky-600"}`}
+              className={`text-xl font-bold ${data.trendData.pastMonth.trend === "Increasing" ? "text-red-500" : data.trendData.pastMonth.trend === "Decreasing" ? "text-green-500" : "text-sky-600"}`}
             >
-              {data.trendData.monthTrend}{" "}
-              {trendIcons[data.trendData.monthTrend]}
+              <span>
+                {data.trendData.pastMonth.trend}{" "}
+                <span className="text-sm text-gray-400">
+                  {data.trendData.pastMonth.percentageChange !== null
+                    ? `(${data.trendData.pastMonth.percentageChange.toPrecision(3)}%)`
+                    : "(New Data)"}
+                </span>
+              </span>
+              {trendIcons[data.trendData.pastMonth.trend]}
             </span>
           </p>
-
           <p className="flex flex-col">
             <span className="text-lg font-medium text-gray-300">
               6 Monthly:
             </span>
             <span
-              className={`text-xl font-bold ${data.trendData.sixMonthTrend === "Increasing" ? "text-red-500" : data.trendData.sixMonthTrend === "Decreasing" ? "text-green-500" : "text-sky-600"}`}
+              className={`text-xl font-bold ${data.trendData.pastSixMonths.trend === "Increasing" ? "text-red-500" : data.trendData.pastSixMonths.trend === "Decreasing" ? "text-green-500" : "text-sky-600"}`}
             >
-              {data.trendData.sixMonthTrend}{" "}
-              {trendIcons[data.trendData.sixMonthTrend]}
+              <span>
+                {data.trendData.pastSixMonths.trend}{" "}
+                <span className="text-sm text-gray-400">
+                  {data.trendData.pastSixMonths.percentageChange !== null
+                    ? `(${data.trendData.pastSixMonths.percentageChange.toPrecision(3)}%)`
+                    : "(New Data)"}
+                </span>
+              </span>
+              {trendIcons[data.trendData.pastSixMonths.trend]}
             </span>
           </p>
-
           <p className="flex flex-col">
             <span className="text-lg font-medium text-gray-300">Yearly:</span>
             <span
-              className={`text-xl font-bold ${data.trendData.yearTrend === "Increasing" ? "text-red-500" : data.trendData.yearTrend === "Decreasing" ? "text-green-500" : "text-sky-600"}`}
+              className={`text-xl font-bold ${data.trendData.pastYear.trend === "Increasing" ? "text-red-500" : data.trendData.pastYear.trend === "Decreasing" ? "text-green-500" : "text-sky-600"}`}
             >
-              {data.trendData.yearTrend} {trendIcons[data.trendData.yearTrend]}
+              <span>
+                {data.trendData.pastYear.trend}{" "}
+                <span className="text-sm text-gray-400">
+                  {data.trendData.pastYear.percentageChange !== null
+                    ? `(${data.trendData.pastYear.percentageChange.toPrecision(3)}%)`
+                    : "(New Data)"}
+                </span>
+              </span>
+              {trendIcons[data.trendData.pastYear.trend]}
             </span>
           </p>
         </div>
       </article>
-
       <article className="flex flex-col w-full lg:basis-[calc(50%-0.5rem)] min-h-48 bg-neutral-800 p-4 rounded justify-between">
         <h4 className="text-2xl text-white font-semibold">Peak season</h4>
         <p className="text-4xl font-bold text-sky-600">
           <span aria-hidden>
-            {data.peakSeason?.quarter ? `Q${data.peakSeason.quarter}` : "N/A"}
+            {data.peakSeason.quarter ? (
+              <>
+                <span className="mr-4">Q{data.peakSeason.quarter}</span>
+                <span className="text-2xl text-gray-400">
+                  {data.peakSeason.totalSightings > 1
+                    ? `${data.peakSeason.totalSightings} sightings`
+                    : `${data.peakSeason.totalSightings} sighting`}
+                </span>
+              </>
+            ) : (
+              "N/A"
+            )}
           </span>
           <span className="sr-only">
-            {data.peakSeason?.quarter
-              ? `Quarter ${data.peakSeason.quarter}`
+            {data.peakSeason.quarter
+              ? `Quarter ${data.peakSeason.quarter} ${data.peakSeason.totalSightings} sightings`
               : "N/A"}
           </span>
         </p>
       </article>
-
       <article className="flex flex-col w-full lg:basis-[calc(50%-0.5rem)] min-h-48 bg-neutral-800 p-4 rounded justify-between">
         <h4 className="text-2xl text-white font-semibold">
           Species most affected
@@ -230,29 +259,35 @@ const OverviewCardsCity = ({ data }: { data: any }) => {
               This year:
             </span>
             <span className="text-xl font-bold">
-              {data.yearMostAffectedSpecies?.speciesName || "N/A"}
+              {data.mostAffectedSpecies.yearMostAffectedSpecies?.speciesName ||
+                "N/A"}
             </span>
             <span className="text-xl font-bold text-sky-500">
-              {data.yearMostAffectedSpecies?.sightingCount || 0} sightings
+              {data.mostAffectedSpecies.yearMostAffectedSpecies
+                ?.sightingCount || 0}{" "}
+              sightings
             </span>
           </p>
           <p className="flex flex-col">
             <span className="text-lg font-medium text-gray-300">All time:</span>
             <span className="text-xl font-bold">
-              {data.maxMostAffectedSpecies?.speciesName || "N/A"}
+              {data.mostAffectedSpecies.maxMostAffectedSpecies?.speciesName ||
+                "N/A"}
             </span>
             <span className="text-xl font-bold text-sky-500">
-              {data.maxMostAffectedSpecies?.sightingCount || 0} sightings
+              {data.mostAffectedSpecies.maxMostAffectedSpecies?.sightingCount ||
+                0}{" "}
+              sightings
             </span>
           </p>
         </div>
       </article>
-
       <article className="flex flex-col w-full lg:basis-[calc(50%-0.5rem)] min-h-48 bg-neutral-800 p-4 rounded justify-between">
         <h4 className="text-2xl text-white font-semibold">
           Invasive species reported
         </h4>
         <p className="text-xl font-bold text-white">
+          {/* NOT YET IMPLEMENTED */}
           No invasive species reported
         </p>
       </article>
