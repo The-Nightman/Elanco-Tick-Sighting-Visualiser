@@ -116,15 +116,20 @@ export async function GET(
 
   const [trendData] = await db
     .select({
-      currentMonth: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 1 MONTH)`,
-      previousMonth: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 2 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 1 MONTH)`,
-      currentSixMonths: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 6 MONTH)`,
-      previousSixMonths: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 12 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 6 MONTH)`,
-      currentYear: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 1 YEAR)`,
-      previousYear: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 2 YEAR AND ${sightings.sightingDate} < NOW() - INTERVAL 1 YEAR)`,
+      currentMonth: sql<number>`SUM(${sightings.sightingDate} >= ${startOfYear} AND ${sightings.sightingDate} < ${endOfYear})`,
+      previousMonth: sql<number>`SUM(${sightings.sightingDate} >= ${new Date(year - 1, 0, 1)} AND ${sightings.sightingDate} < ${startOfYear})`,
+      currentSixMonths: sql<number>`SUM(${sightings.sightingDate} >= ${new Date(year, 6, 1)} AND ${sightings.sightingDate} < ${endOfYear})`,
+      previousSixMonths: sql<number>`SUM(${sightings.sightingDate} >= ${new Date(year - 1, 6, 1)} AND ${sightings.sightingDate} < ${new Date(year, 6, 1)})`,
+      currentYear: sql<number>`SUM(${sightings.sightingDate} >= ${startOfYear} AND ${sightings.sightingDate} < ${endOfYear})`,
+      previousYear: sql<number>`SUM(${sightings.sightingDate} >= ${new Date(year - 1, 0, 1)} AND ${sightings.sightingDate} < ${startOfYear})`,
     })
     .from(sightings)
-    .where(and(eq(sightings.cityId, Number(id)), sql`${sightings.sightingDate} >= NOW() - INTERVAL 2 YEAR`));
+    .where(
+      and(
+        eq(sightings.cityId, Number(id)),
+        between(sightings.sightingDate, new Date(year - 2, 0, 1), endOfYear),
+      ),
+    );
 
   const [peakSeason] = await db
     .select({
@@ -132,7 +137,12 @@ export async function GET(
       totalSightings: sql<number>`SUM(1)`,
     })
     .from(sightings)
-    .where(and(eq(sightings.cityId, Number(id)), sql`YEAR(${sightings.sightingDate}) = ${year}`))
+    .where(
+      and(
+        eq(sightings.cityId, Number(id)),
+        sql`YEAR(${sightings.sightingDate}) = ${year}`,
+      ),
+    )
     .groupBy(sql`QUARTER(${sightings.sightingDate})`)
     .orderBy(sql`SUM(1) DESC`)
     .limit(1);
@@ -143,7 +153,12 @@ export async function GET(
       sightingCount: sql<number>`COUNT(*)`,
     })
     .from(sightings)
-    .where(and(eq(sightings.cityId, Number(id)), between(sightings.sightingDate, startOfYear, endOfYear)))
+    .where(
+      and(
+        eq(sightings.cityId, Number(id)),
+        between(sightings.sightingDate, startOfYear, endOfYear),
+      ),
+    )
     .innerJoin(species, eq(sightings.speciesId, species.id))
     .groupBy(species.speciesName)
     .orderBy(sql`COUNT(*) DESC`)
@@ -155,7 +170,12 @@ export async function GET(
       sightingCount: sql<number>`COUNT(*)`,
     })
     .from(sightings)
-    .where(and(eq(sightings.cityId, Number(id)), eq(sightings.speciesId, species.id)))
+    .where(
+      and(
+        eq(sightings.cityId, Number(id)),
+        eq(sightings.speciesId, species.id),
+      ),
+    )
     .innerJoin(species, eq(sightings.speciesId, species.id))
     .groupBy(species.speciesName)
     .orderBy(sql`COUNT(*) DESC`)

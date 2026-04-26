@@ -109,15 +109,17 @@ export async function GET(request: NextRequest) {
 
   const [trendData] = await db
     .select({
-      currentMonth: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 1 MONTH)`,
-      previousMonth: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 2 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 1 MONTH)`,
-      currentSixMonths: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 6 MONTH)`,
-      previousSixMonths: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 12 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 6 MONTH)`,
-      currentYear: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 1 YEAR)`,
-      previousYear: sql<number>`SUM(${sightings.sightingDate} >= NOW() - INTERVAL 2 YEAR AND ${sightings.sightingDate} < NOW() - INTERVAL 1 YEAR)`,
+      currentMonth: sql<number>`SUM(${sightings.sightingDate} >= ${startOfYear} AND ${sightings.sightingDate} < ${endOfYear})`,
+      previousMonth: sql<number>`SUM(${sightings.sightingDate} >= ${new Date(year - 1, 0, 1)} AND ${sightings.sightingDate} < ${startOfYear})`,
+      currentSixMonths: sql<number>`SUM(${sightings.sightingDate} >= ${new Date(year, 6, 1)} AND ${sightings.sightingDate} < ${endOfYear})`,
+      previousSixMonths: sql<number>`SUM(${sightings.sightingDate} >= ${new Date(year - 1, 6, 1)} AND ${sightings.sightingDate} < ${new Date(year, 6, 1)})`,
+      currentYear: sql<number>`SUM(${sightings.sightingDate} >= ${startOfYear} AND ${sightings.sightingDate} < ${endOfYear})`,
+      previousYear: sql<number>`SUM(${sightings.sightingDate} >= ${new Date(year - 1, 0, 1)} AND ${sightings.sightingDate} < ${startOfYear})`,
     })
     .from(sightings)
-    .where(sql`${sightings.sightingDate} >= NOW() - INTERVAL 2 YEAR`);
+    .where(
+      between(sightings.sightingDate, new Date(year - 2, 0, 1), endOfYear),
+    );
 
   const [peakSeason] = await db
     .select({
