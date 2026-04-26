@@ -1,14 +1,8 @@
-"use server";
+"use client";
 
-import { db } from "@/db";
-import { cities, sightings, species } from "@/db/schema";
-import { asc, between, eq, sql, max } from "drizzle-orm";
 import TickCountCard from "@/components/Cards/TickCountCard/TickCountCard";
 import Histogram from "@/components/Charts/Histogram/Histogram";
 import HorizonChart from "@/components/Charts/HorizonChart/HorizonChart";
-import { HorizonData } from "@/interfaces/HorizonData";
-import { HistogramData } from "@/interfaces/HistogramData";
-import { TickCardData } from "@/interfaces/TickCardData";
 import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
 import Tab from "@/components/Tabs/Tab/Tab";
 import SearchBar from "@/components/SearchBar/SearchBar";
@@ -16,185 +10,90 @@ import D3Map from "@/components/Map/D3Map";
 import OverviewCardsHome from "@/components/Cards/OverViewCards/OverviewCardsHome";
 import Link from "next/link";
 import DownloadButton from "@/components/Button/DownloadButton";
+import TimeControls from "@/components/Button/TimeControls/TimeControls";
+import { useEffect, useState } from "react";
+import { HomepageData } from "@/interfaces/HomepageData";
 
-const page = async () => {
+const dataPlaceHolder = {
+  tickCardData: [],
+  histogramData: [],
+  horizonData: [],
+  overviewCardsData: {
+    sightingsReports: {
+      sightingsPastMonth: 0,
+      sightingsPastQuarter: 0,
+      sightingsPastYear: 0,
+      reportsThisWeek: 0,
+    },
+    trendData: {
+      pastMonth: {
+        percentageChange: 0,
+        trend: "Stable",
+      },
+      pastSixMonths: {
+        percentageChange: 0,
+        trend: "Stable",
+      },
+      pastYear: {
+        percentageChange: 0,
+        trend: "Stable",
+      },
+    },
+    peakSeason: {
+      quarter: 0,
+      totalSightings: 0,
+    },
+    topRisingLocations: [],
+    mostAffectedSpecies: {
+      yearMostAffectedSpecies: {
+        speciesName: null,
+        sightingCount: 0,
+      },
+      maxMostAffectedSpecies: {
+        speciesName: null,
+        sightingCount: 0,
+      },
+    },
+  },
+};
+
+const page = () => {
   const currentYear = new Date().getFullYear();
-  const startOfYear = new Date(currentYear, 0, 1);
-  const endOfYear = new Date(currentYear, 11, 31);
+  const [data, setData] = useState<HomepageData>(dataPlaceHolder);
+  const [controlsState, setControlsState] = useState({
+    period: "currentYear",
+    selectedYear: currentYear,
+  });
 
-  const tickCardDataQuery: TickCardData[] = (await db
-    .select({
-      sightings: db.$count(sightings, eq(sightings.speciesId, species.id)),
-      species: species.speciesName,
-      latinName: species.latinName,
-      lastReported: max(sightings.sightingDate),
-    })
-    .from(sightings)
-    .innerJoin(species, eq(sightings.speciesId, species.id))
-    .groupBy(species.id)) as TickCardData[]; // Type assertion to fix Date | null error when we know date will always be present
+  useEffect(() => {
+    const apiQuery = async (query: string) => {
+      const res = await fetch(query);
+      const data: HomepageData = await res.json();
+      setData(data);
+    };
 
-  const histogramMonthBucket = sql<string>`DATE_FORMAT(${sightings.sightingDate}, '%Y-%m-01')`;
+    const queryBuilder = () => {
+      let queryUrl = "/api/data/pages/home";
 
-  const histogramData: HistogramData[] = await db
-    .select({
-      date: histogramMonthBucket,
-      count: sql<number>`COUNT(*)`,
-    })
-    .from(sightings)
-    .where(between(sightings.sightingDate, startOfYear, endOfYear))
-    .groupBy(histogramMonthBucket)
-    .orderBy(asc(histogramMonthBucket));
+      switch (controlsState.period) {
+        case "currentYear":
+          queryUrl += `?viewYear=${currentYear}`;
+          break;
+        case "year":
+          queryUrl += `?viewYear=${controlsState.selectedYear}`;
+          break;
+        case "max":
+          queryUrl += `?viewYear=max`;
+          break;
+        default:
+          break;
+      }
 
-  const horizonDataQuery: HorizonData[] = await db
-    .select({
-      cityId: cities.id,
-      cityName: cities.cityName,
-      date: sightings.sightingDate,
-      sightingCount: sql<number>`COUNT(*)`,
-    })
-    .from(sightings)
-    .where(between(sightings.sightingDate, startOfYear, endOfYear))
-    .innerJoin(cities, eq(sightings.cityId, cities.id))
-    .groupBy(cities.id, cities.cityName, sightings.sightingDate)
-    .orderBy(asc(cities.cityName), asc(sightings.sightingDate));
+      return queryUrl;
+    };
 
-  const cityData = await db.select().from(cities);
-
-  const [overviewData] = await db
-    .select({
-      sightingsPastMonth: db.$count(
-        sightings,
-        between(
-          sightings.sightingDate,
-          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-          new Date(),
-        ),
-      ),
-      sightingsPastQuarter: db.$count(
-        sightings,
-        between(
-          sightings.sightingDate,
-          new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
-          new Date(),
-        ),
-      ),
-      sightingsPastYear: db.$count(
-        sightings,
-        between(
-          sightings.sightingDate,
-          new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
-          new Date(),
-        ),
-      ),
-      reportsThisWeek: db.$count(
-        sightings,
-        between(
-          sightings.sightingDate,
-          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-          new Date(),
-        ),
-      ),
-    })
-    .from(sightings);
-
-  const [trendData] = await db
-    .select({
-      monthTrend: sql<string>`CASE
-      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 1 MONTH THEN 1 ELSE NULL END) >
-           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 3 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 1 MONTH THEN 1 ELSE NULL END)
-      THEN 'Increasing'
-      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 1 MONTH THEN 1 ELSE NULL END) <
-           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 3 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 1 MONTH THEN 1 ELSE NULL END)
-      THEN 'Decreasing'
-      ELSE 'Stable'
-    END`,
-      sixMonthTrend: sql<string>`CASE
-      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 6 MONTH THEN 1 ELSE NULL END) >
-           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 12 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 6 MONTH THEN 1 ELSE NULL END)
-      THEN 'Increasing'
-      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 6 MONTH THEN 1 ELSE NULL END) <
-           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 12 MONTH AND ${sightings.sightingDate} < NOW() - INTERVAL 6 MONTH THEN 1 ELSE NULL END)
-      THEN 'Decreasing'
-      ELSE 'Stable'
-    END`,
-      yearTrend: sql<string>`CASE
-      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 1 YEAR THEN 1 ELSE NULL END) >
-           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 2 YEAR AND ${sightings.sightingDate} < NOW() - INTERVAL 1 YEAR THEN 1 ELSE NULL END)
-      THEN 'Increasing'
-      WHEN AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 1 YEAR THEN 1 ELSE NULL END) <
-           AVG(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 2 YEAR AND ${sightings.sightingDate} < NOW() - INTERVAL 1 YEAR THEN 1 ELSE NULL END)
-      THEN 'Decreasing'
-      ELSE 'Stable'
-    END`,
-    })
-    .from(sightings);
-
-  const [peakSeason] = await db
-    .select({
-      quarter: sql<number>`QUARTER(${sightings.sightingDate})`,
-      totalSightings: sql<number>`SUM(1)`,
-    })
-    .from(sightings)
-    .where(sql`YEAR(${sightings.sightingDate}) = ${currentYear}`)
-    .groupBy(sql`QUARTER(${sightings.sightingDate})`)
-    .orderBy(sql`SUM(1) DESC`)
-    .limit(1);
-
-  const topRisingLocations = await db
-    .select({
-      location: cities.cityName,
-      recentCount: sql<number>`SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)`,
-      previousCount: sql<number>`SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)`,
-      rateOfChange: sql<number>`CASE
-      WHEN SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END) = 0 THEN NULL
-      ELSE (
-        (
-          SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END) -
-          SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)
-        ) /
-        SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)
-      ) * 100
-    END`,
-    })
-    .from(sightings)
-    .innerJoin(cities, eq(sightings.cityId, cities.id))
-    .groupBy(cities.cityName)
-    .orderBy(
-      sql`CASE
-      WHEN SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END) = 0 THEN NULL
-      ELSE (
-        (
-          SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END) -
-          SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)
-        ) /
-        SUM(CASE WHEN ${sightings.sightingDate} >= NOW() - INTERVAL 30 DAY AND ${sightings.sightingDate} < NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END)
-      ) * 100
-    END DESC`,
-    )
-    .limit(3);
-
-  const [yearMostAffectedSpecies] = await db
-    .select({
-      speciesName: species.speciesName,
-      sightingCount: sql<number>`COUNT(*)`,
-    })
-    .from(sightings)
-    .where(between(sightings.sightingDate, startOfYear, endOfYear))
-    .innerJoin(species, eq(sightings.speciesId, species.id))
-    .groupBy(species.speciesName)
-    .orderBy(sql`COUNT(*) DESC`)
-    .limit(1);
-
-  const [maxMostAffectedSpecies] = await db
-    .select({
-      speciesName: species.speciesName,
-      sightingCount: sql<number>`COUNT(*)`,
-    })
-    .from(sightings)
-    .innerJoin(species, eq(sightings.speciesId, species.id))
-    .groupBy(species.speciesName)
-    .orderBy(sql`COUNT(*) DESC`)
-    .limit(1);
+    apiQuery(queryBuilder());
+  }, [controlsState.period, controlsState.selectedYear]);
 
   return (
     <>
@@ -215,9 +114,17 @@ const page = async () => {
           <h3 className="text-2xl text-white font-semibold">UK sighting map</h3>
           <D3Map />
         </section>
+        <div className="flex justify-end">
+          <TimeControls
+            ariaDataName="UK"
+            radioGroupName="tickCards"
+            state={controlsState}
+            setState={setControlsState}
+          />
+        </div>
         <section className="flex flex-col">
           <div className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">
-            {tickCardDataQuery.map((item, index) => (
+            {data.tickCardData.map((item, index) => (
               <TickCountCard
                 key={`tickCard-${item.species}-${index}-TickCountCard`}
                 data={item}
@@ -235,18 +142,7 @@ const page = async () => {
           <div className="flex bg-neutral-800 items-center gap-2 p-2 mb-2 border-b-sky-600 border-b-4">
             <h3 className="text-2xl text-white font-semibold">Overview</h3>
           </div>
-          <OverviewCardsHome
-            data={{
-              ...overviewData,
-              trendData,
-              peakSeason,
-              topRisingLocations: topRisingLocations.filter(
-                (loc) => loc.rateOfChange !== null,
-              ),
-              yearMostAffectedSpecies,
-              maxMostAffectedSpecies,
-            }}
-          />
+          <OverviewCardsHome data={data.overviewCardsData} />
         </section>
         <TabGroup>
           <Tab label="Sightings over time">
@@ -261,7 +157,7 @@ const page = async () => {
                     const date = new Date(currentYear, m, 1);
                     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
                   }).map((date) => {
-                    const matchingData = histogramData.find(
+                    const matchingData = data.histogramData.find(
                       (d) => d.date === date,
                     );
                     return {
@@ -280,25 +176,7 @@ const page = async () => {
               </h3>
               <HorizonChart
                 // Include all cities in the data even with no sightings in the given timeframe
-                data={cityData
-                  .flatMap((city) => {
-                    const citySightings = horizonDataQuery.filter(
-                      (data) => data.cityId === city.id,
-                    );
-                    // Find sightings for this city, if none exist, return a default entry with 0 so it is included in the chart
-                    if (citySightings.length === 0) {
-                      return [
-                        {
-                          cityId: city.id,
-                          cityName: city.cityName,
-                          date: startOfYear,
-                          sightingCount: 0,
-                        },
-                      ];
-                    }
-                    return citySightings;
-                  })
-                  .sort((a, b) => a.cityName.localeCompare(b.cityName))}
+                data={data.horizonData}
               />
             </div>
           </Tab>
