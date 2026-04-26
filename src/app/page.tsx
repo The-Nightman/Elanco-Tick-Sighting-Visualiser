@@ -79,7 +79,7 @@ const page = () => {
         case "currentYear":
           queryUrl += `?viewYear=${currentYear}`;
           break;
-        case "year":
+        case "selectedYear":
           queryUrl += `?viewYear=${controlsState.selectedYear}`;
           break;
         case "max":
