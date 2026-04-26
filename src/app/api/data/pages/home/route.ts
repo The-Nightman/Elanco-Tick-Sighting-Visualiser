@@ -12,9 +12,8 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const chosenYear: string | null = searchParams.get("viewYear");
 
-  const year = new Date(
-    chosenYear ?? new Date().getFullYear().toString(),
-  ).getFullYear();
+  const year = chosenYear ? Number(chosenYear) : new Date().getFullYear();
+
   const startOfYear = new Date(year, 0, 1);
   const endOfYear = new Date(year, 11, 31);
 
@@ -254,7 +253,15 @@ export async function GET(request: NextRequest) {
       ),
       pastYear: getTrend(trendData.currentYear, trendData.previousYear),
     },
-    peakSeason,
+    peakSeason: peakSeason
+      ? {
+          quarter: peakSeason.quarter,
+          totalSightings: peakSeason.totalSightings,
+        }
+      : {
+          quarter: null,
+          totalSightings: 0,
+        },
     topRisingLocations,
     mostAffectedSpecies: {
       yearMostAffectedSpecies,
