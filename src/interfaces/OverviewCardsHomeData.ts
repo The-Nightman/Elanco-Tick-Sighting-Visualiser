@@ -31,11 +31,11 @@ export interface OverviewCardsHomeData {
   }[];
   mostAffectedSpecies: {
     yearMostAffectedSpecies: {
-      speciesName: string;
+      speciesName: string | null;
       sightingCount: number;
     };
     maxMostAffectedSpecies: {
-      speciesName: string;
+      speciesName: string | null;
       sightingCount: number;
     };
   };
