@@ -187,7 +187,7 @@ const page = async () => {
                   height={238}
                 />
                 <figcaption className="absolute bottom-0 left-0 w-full bg-neutral-800/70 italic text-white text-center">
-                    &copy; André Karwath 2005 (CC BY-SA 2.5)
+                  &copy; André Karwath 2005 (CC BY-SA 2.5)
                 </figcaption>
               </figure>
             </div>
@@ -384,7 +384,7 @@ const page = async () => {
                   height={203}
                 />
                 <figcaption className="absolute bottom-0 left-0 w-full bg-neutral-800/70 italic text-white text-center">
-                    &copy;Birgit Rhode 2019 (CC BY-SA 4.0)
+                  &copy;Birgit Rhode 2019 (CC BY-SA 4.0)
                 </figcaption>
               </figure>
             </div>
@@ -561,7 +561,7 @@ const page = async () => {
                   height={267}
                 />
                 <figcaption className="absolute bottom-0 left-0 w-full bg-neutral-800/70 italic text-white text-center">
-                    &copy; Mario Bassini 2015 (CC BY 4.0)
+                  &copy; Mario Bassini 2015 (CC BY 4.0)
                 </figcaption>
               </figure>
             </div>
@@ -601,6 +601,23 @@ const page = async () => {
                 </figcaption>
               </figure>
             </div>
+          </div>
+        </article>
+        <article className="flex justify-center mt-32 border-t-4 border-sky-600">
+          <div className="w-full lg:max-w-3/4 self-center p-4 gap-8">
+            <h4 className="text-4xl font-bold">
+              <div>References</div>
+            </h4>
+            <ul className="list-disc list-inside">
+              <li>
+                ESCCAP UK. Ticks. Retrieved from
+                https://www.esccapuk.org.uk/page/Ticks/36/
+              </li>
+              <li>
+                Government of the United Kingdom. (2025). Tick species profiles.
+                https://www.gov.uk/guidance/tick-species-profiles
+              </li>
+            </ul>
           </div>
         </article>
       </section>
