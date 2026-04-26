@@ -229,11 +229,22 @@ const OverviewCardsHome = ({ data }: OverviewCardsHomeProps) => {
         <h4 className="text-2xl text-white font-semibold">Peak season</h4>
         <p className="text-4xl font-bold text-sky-600">
           <span aria-hidden>
-            {data.peakSeason.quarter ? `Q${data.peakSeason.quarter}` : "N/A"}
+            {data.peakSeason.quarter ? (
+              <>
+                <span className="mr-4">Q{data.peakSeason.quarter}</span>
+                <span className="text-2xl text-gray-400">
+                  {data.peakSeason.totalSightings > 1
+                    ? `${data.peakSeason.totalSightings} sightings`
+                    : `${data.peakSeason.totalSightings} sighting`}
+                </span>
+              </>
+            ) : (
+              "N/A"
+            )}
           </span>
           <span className="sr-only">
             {data.peakSeason.quarter
-              ? `Quarter ${data.peakSeason.quarter}`
+              ? `Quarter ${data.peakSeason.quarter} ${data.peakSeason.totalSightings} sightings`
               : "N/A"}
           </span>
         </p>
