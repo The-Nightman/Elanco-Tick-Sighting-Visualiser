@@ -20,7 +20,7 @@ export interface OverviewCardsHomeData {
     };
   };
   peakSeason: {
-    quarter: number;
+    quarter: number | null;
     totalSightings: number;
   };
   topRisingLocations: {
