@@ -9,7 +9,7 @@ import SearchBar from "@/components/SearchBar/SearchBar";
 import D3Map from "@/components/Map/D3Map";
 import OverviewCardsHome from "@/components/Cards/OverViewCards/OverviewCardsHome";
 import Link from "next/link";
-import DownloadButton from "@/components/Button/DownloadButton";
+import DownloadButton from "@/components/Button/DownloadButton/DownloadButton";
 import TimeControls from "@/components/Button/TimeControls/TimeControls";
 import { useEffect, useState } from "react";
 import { HomepageData } from "@/interfaces/HomepageData";

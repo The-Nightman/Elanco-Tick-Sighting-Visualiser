@@ -1,6 +1,6 @@
 "use client";
 
-import DownloadButton from "@/components/Button/DownloadButton";
+import DownloadButton from "@/components/Button/DownloadButton/DownloadButton";
 import TimeControls from "@/components/Button/TimeControls/TimeControls";
 import OverviewCardsCity from "@/components/Cards/OverViewCards/OverviewCardsCity";
 import TickCountCard from "@/components/Cards/TickCountCard/TickCountCard";
