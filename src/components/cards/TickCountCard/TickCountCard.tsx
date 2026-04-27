@@ -27,9 +27,13 @@ const TickCountCard = ({ data }: TickCountCardProps) => {
         <div>
           <dt>Last Reported</dt>
           <dd>
-            <time dateTime={data.lastReported.toISOString()}>
-              {formatter.format(data.lastReported)}
-            </time>
+            {data.lastReported !== null ? (
+              <time dateTime={data.lastReported as string}>
+                {formatter.format(new Date(data.lastReported))}
+              </time>
+            ) : (
+              "Not reported"
+            )}
           </dd>
         </div>
       </dl>

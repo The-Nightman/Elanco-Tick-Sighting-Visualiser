@@ -27,7 +27,7 @@ const HorizonChart = ({ data }: HorizonChartProps) => {
       height: dynamicHeight,
       width: svgElement ? svgElement.clientWidth : 0,
     });
-  }, []);
+  }, [JSON.stringify(data)]);
 
   // Generate date timestamps for each week in the given year, this will help to smoothen the chart
   // lines and avoid a curve from the axis extents when only 1 or 2 data points are present in a year
@@ -48,8 +48,14 @@ const HorizonChart = ({ data }: HorizonChartProps) => {
     return dates;
   })(2026, 2026).map((date) => date.getTime());
 
+  //! Do not remove, i think because of switching from SSR to api fetching this component was expecting date objects not date strings
+  const parsedData = data.map((d) => ({
+    ...d,
+    date: new Date(d.date).getTime(),
+  }));
+
   // Extract date timestamps from data
-  const dates = Array.from(d3.group(data, (d) => +d.date).keys()).sort(
+  const dates = Array.from(d3.group(parsedData, (d) => +d.date).keys()).sort(
     d3.ascending,
   );
 
@@ -60,7 +66,7 @@ const HorizonChart = ({ data }: HorizonChartProps) => {
 
   // From D3 docs, iterate through the data to sort into "bins" for each city
   const series = d3
-    .groups(data, (d) => d.cityName)
+    .groups(parsedData, (d) => d.cityName)
     .map(([cityName, sightings]) => {
       const value = new Map(sightings.map((d) => [+d.date, d.sightingCount]));
       return { cityName, values: combinedDates.map((d) => value.get(d) || 0) };
@@ -75,11 +81,11 @@ const HorizonChart = ({ data }: HorizonChartProps) => {
     [margins.left, svgDimensions.width - margins.right],
   );
   const yScale = d3.scalePoint(
-    Array.from(new Set(data.map((d) => d.cityName))),
+    Array.from(new Set(parsedData.map((d) => d.cityName))),
     [margins.top, svgDimensions.height - margins.bottom],
   );
   const zScale = d3.scaleLinear(
-    [0, d3.max(series, (d) => d3.max(d.values))!],
+    [0, d3.max(series, (d) => d3.max(d.values))!], // Ensure domain has a minimum range
     [0, -overlap * yScale.step()],
   );
 
