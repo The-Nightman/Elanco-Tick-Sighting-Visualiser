@@ -5,17 +5,33 @@ import { HomepageData } from "@/interfaces/HomepageData";
 import { HorizonData } from "@/interfaces/HorizonData";
 import { OverviewCardsHomeData } from "@/interfaces/OverviewCardsHomeData";
 import { TickCardData } from "@/interfaces/TickCardData";
-import { and, asc, between, eq, max, sql } from "drizzle-orm";
+import { and, asc, between, eq, max, min, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const chosenYear: string | null = searchParams.get("viewYear");
 
-  const year = chosenYear ? Number(chosenYear) : new Date().getFullYear();
+  let year: number;
+  let startOfYear: Date;
+  let endOfYear: Date;
 
-  const startOfYear = new Date(year, 0, 1);
-  const endOfYear = new Date(year, 11, 31);
+  if (chosenYear === "max") {
+    const [maxYearResult] = await db
+      .select({
+        startOfData: min(sightings.sightingDate),
+      })
+      .from(sightings);
+
+    year = maxYearResult.startOfData!.getFullYear();
+
+    startOfYear = new Date(year, 0, 1);
+    endOfYear = new Date(new Date().getFullYear(), 11, 31);
+  } else {
+    year = chosenYear ? Number(chosenYear) : new Date().getFullYear();
+    startOfYear = new Date(year, 0, 1);
+    endOfYear = new Date(year, 11, 31);
+  }
 
   /*
    * QUERIES
