@@ -34,7 +34,12 @@ const TimeControls = ({
                 aria-label={`${ariaDataName} data from the current year`}
                 className="peer hidden"
                 checked={state.period === "currentYear"}
-                onChange={() => setState({ ...state, period: "currentYear" })}
+                onChange={() =>
+                  setState({
+                    selectedYear: new Date().getFullYear(),
+                    period: "currentYear",
+                  })
+                }
               />
               <label htmlFor="periodThisYear" className="block cursor-pointer">
                 This Year
