@@ -224,7 +224,12 @@ const page = () => {
           <Tab label="Sightings by city">
             <div className="w-full h-fit pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
-                Sightings through {controlsState.selectedYear} by City
+                <span className="block">
+                  Sightings through {controlsState.selectedYear} by City
+                </span>
+                <span className="block text-base text-neutral-300">
+                  (Hover for more details)
+                </span>
               </h3>
               <HorizonChart
                 // Include all cities in the data even with no sightings in the given timeframe
