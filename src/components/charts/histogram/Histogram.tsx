@@ -47,7 +47,7 @@ const Histogram = ({ data }: HistogramProps) => {
         })
         .tickSizeOuter(0),
     );
-  }, [svgDimensions.height, svgDimensions.width]);
+  }, [svgDimensions.height, svgDimensions.width, JSON.stringify(data)]); // We need to stringify the array as react will just use an object reference check otherwise
 
   return (
     <svg ref={histogramSvgRef} className="w-full h-full bg-white">
