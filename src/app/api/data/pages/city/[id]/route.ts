@@ -85,24 +85,33 @@ export async function GET(
     .select({
       date: histogramMonthBucket,
       speciesName: species.speciesName,
+      colour: species.colour,
       count: sql<number>`COUNT(*)`,
     })
     .from(sightings)
     .innerJoin(species, eq(sightings.speciesId, species.id))
-    .where(between(sightings.sightingDate, startOfYear, endOfYear))
+    .where(
+      and(
+        eq(sightings.cityId, Number(id)),
+        between(sightings.sightingDate, startOfYear, endOfYear),
+      ),
+    )
     .groupBy(histogramMonthBucket, species.speciesName)
     .orderBy(asc(histogramMonthBucket), asc(species.speciesName))
     .then((data) => {
       const groupedData: Record<
         string,
-        { date: string; data: { speciesName: string; count: number }[] }
+        {
+          date: string;
+          data: { speciesName: string; colour: string; count: number }[];
+        }
       > = {};
 
-      data.forEach(({ date, speciesName, count }) => {
+      data.forEach(({ date, speciesName, colour, count }) => {
         if (!groupedData[date]) {
           groupedData[date] = { date, data: [] };
         }
-        groupedData[date].data.push({ speciesName, count });
+        groupedData[date].data.push({ speciesName, colour, count });
       });
 
       return Object.values(groupedData);

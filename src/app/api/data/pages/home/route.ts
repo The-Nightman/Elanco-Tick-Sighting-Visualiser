@@ -76,6 +76,7 @@ export async function GET(request: NextRequest) {
     .select({
       date: histogramMonthBucket,
       speciesName: species.speciesName,
+      colour: species.colour,
       count: sql<number>`COUNT(*)`,
     })
     .from(sightings)
@@ -86,14 +87,14 @@ export async function GET(request: NextRequest) {
     .then((data) => {
       const groupedData: Record<
         string,
-        { date: string; data: { speciesName: string; count: number }[] }
+        { date: string; data: { speciesName: string; colour: string; count: number }[] }
       > = {};
 
-      data.forEach(({ date, speciesName, count }) => {
+      data.forEach(({ date, speciesName, colour, count }) => {
         if (!groupedData[date]) {
           groupedData[date] = { date, data: [] };
         }
-        groupedData[date].data.push({ speciesName, count });
+        groupedData[date].data.push({ speciesName, colour, count });
       });
 
       return Object.values(groupedData);
