@@ -151,7 +151,7 @@ const page = () => {
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
                 <span className="block">
-                  Sightings through {controlsState.selectedYear}
+                  Sightings through {controlsState.period === "max" ? "lifetime" : controlsState.selectedYear}
                 </span>
                 <span className="block text-base text-neutral-300">
                   (Hover for more details)
@@ -188,7 +188,7 @@ const page = () => {
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
                 <span className="block">
-                  Sightings by species through {controlsState.selectedYear}
+                  Sightings by species through {controlsState.period === "max" ? "lifetime" : controlsState.selectedYear}
                 </span>
                 <span className="block text-base text-neutral-300">
                   (Hover for more details)
@@ -225,7 +225,7 @@ const page = () => {
             <div className="w-full h-fit pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
                 <span className="block">
-                  Sightings through {controlsState.selectedYear} by City
+                  Sightings through {controlsState.period === "max" ? "lifetime" : controlsState.selectedYear} by City
                 </span>
                 <span className="block text-base text-neutral-300">
                   (Hover for more details)
