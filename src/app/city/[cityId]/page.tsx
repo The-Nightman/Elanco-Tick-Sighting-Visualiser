@@ -5,7 +5,7 @@ import TimeControls from "@/components/Button/TimeControls/TimeControls";
 import OverviewCardsCity from "@/components/Cards/OverViewCards/OverviewCardsCity";
 import TickCountCard from "@/components/Cards/TickCountCard/TickCountCard";
 import Histogram from "@/components/Charts/Histogram/Histogram";
-import HistogramStacked from "@/components/Charts/HistogramStacked/HistorgramStacked";
+import HistogramStacked from "@/components/Charts/HistogramStacked/HistogramStacked";
 import Tab from "@/components/Tabs/Tab/Tab";
 import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
 import { CitypageData } from "@/interfaces/CitypageData";

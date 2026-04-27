@@ -13,7 +13,7 @@ import DownloadButton from "@/components/Button/DownloadButton/DownloadButton";
 import TimeControls from "@/components/Button/TimeControls/TimeControls";
 import { useEffect, useState } from "react";
 import { HomepageData } from "@/interfaces/HomepageData";
-import HistogramStacked from "@/components/Charts/HistogramStacked/HistorgramStacked";
+import HistogramStacked from "@/components/Charts/HistogramStacked/HistogramStacked";
 
 const dataPlaceHolder = {
   tickCardData: [],
