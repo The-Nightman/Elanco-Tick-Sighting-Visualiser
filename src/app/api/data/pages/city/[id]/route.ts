@@ -114,6 +114,10 @@ export async function GET(
         groupedData[date].data.push({ speciesName, colour, count });
       });
 
+      for (const date in groupedData) {
+        groupedData[date].data.sort((a, b) => a.count - b.count);
+      }
+
       return Object.values(groupedData);
     });
 
