@@ -1,4 +1,4 @@
 export interface StackedHistogramData {
   date: string;
-  data: { speciesName: string; count: number }[];
+  data: { speciesName: string; colour: string; count: number }[];
 }
