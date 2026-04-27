@@ -1,9 +1,12 @@
 import { datetime, decimal, int, mysqlEnum, mysqlTable, varchar } from "drizzle-orm/mysql-core";
+import { boolean } from "drizzle-orm/mysql-core";
 
 export const species = mysqlTable("Species", {
   id: int("Id").autoincrement().primaryKey(),
   speciesName: varchar("SpeciesName", { length: 255 }).notNull().unique(),
   latinName: varchar("LatinName", { length: 255 }).notNull().unique(),
+  colour: varchar("Colour", { length: 7 }).notNull(),
+  invasiveStatus: boolean("InvasiveStatus").notNull(),
 });
 
 const citiesEnum = mysqlEnum(["England", "Scotland", "Wales", "Northern Ireland"]);

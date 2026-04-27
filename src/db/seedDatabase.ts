@@ -4,7 +4,7 @@ import { db } from ".";
 import { cities, species as dbSpecies, sightings } from "./schema";
 import ukTickSpecies from "./data/ukTickSpecies.json";
 import ukCities from "./data/ukCities.json";
-import { like, or } from "drizzle-orm";
+import { eq, isNull, like, or } from "drizzle-orm";
 import { generateSightingId } from "@/utils/generateSightingId";
 import { validateIsoString } from "@/utils/validateIsoString";
 
@@ -52,6 +52,59 @@ export const seedDatabase = async (): Promise<void> => {
   // Tick species data sourced from https://www.gov.uk/guidance/tick-species-profiles
   if ((await db.select().from(dbSpecies)).length === 0) {
     await db.insert(dbSpecies).values(ukTickSpecies);
+  }
+
+  if (
+    (
+      await db
+        .select()
+        .from(dbSpecies)
+        .where(
+          or(
+            isNull(dbSpecies.colour),
+            isNull(dbSpecies.invasiveStatus),
+            eq(dbSpecies.colour, ""),
+            eq(dbSpecies.invasiveStatus, false), // Testing for false as by default it will force the value to 0 if not provided
+          ),
+        )
+    ).length > 0
+  ) {
+    const partialSpeciesRecords = await db
+      .select()
+      .from(dbSpecies)
+      .where(
+        or(
+          isNull(dbSpecies.colour),
+          isNull(dbSpecies.invasiveStatus),
+          eq(dbSpecies.colour, ""),
+        ),
+      );
+
+    for (const species of partialSpeciesRecords) {
+      const updatedSpecies = ukTickSpecies.find(
+        (tick) =>
+          tick.speciesName === species.speciesName ||
+          tick.latinName === species.latinName,
+      );
+
+      if (updatedSpecies) {
+        await db
+          .update(dbSpecies)
+          .set({
+            colour: updatedSpecies.colour,
+            invasiveStatus: updatedSpecies.invasiveStatus,
+          })
+          .where(eq(dbSpecies.id, species.id));
+
+        console.log(
+          `Updated species ${species.speciesName} (${species.latinName}) with colour and invasiveStatus.`,
+        );
+      } else {
+        console.warn(
+          `No matching data found in ukTickSpecies.json for species ${species.speciesName} (${species.latinName}).`,
+        );
+      }
+    }
   }
 
   // List of UK cities sourced from https://www.gov.uk/government/publications/list-of-cities/list-of-cities-html
