@@ -87,7 +87,10 @@ export async function GET(request: NextRequest) {
     .then((data) => {
       const groupedData: Record<
         string,
-        { date: string; data: { speciesName: string; colour: string; count: number }[] }
+        {
+          date: string;
+          data: { speciesName: string; colour: string; count: number }[];
+        }
       > = {};
 
       data.forEach(({ date, speciesName, colour, count }) => {
@@ -96,6 +99,10 @@ export async function GET(request: NextRequest) {
         }
         groupedData[date].data.push({ speciesName, colour, count });
       });
+
+      for (const date in groupedData) {
+        groupedData[date].data.sort((a, b) => a.count - b.count);
+      }
 
       return Object.values(groupedData);
     });
