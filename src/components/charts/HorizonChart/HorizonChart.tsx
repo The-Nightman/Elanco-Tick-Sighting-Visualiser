@@ -37,6 +37,11 @@ const HorizonChart = ({ data }: HorizonChartProps) => {
     });
   }, [JSON.stringify(data)]);
 
+  // Extract unique years from the data so we can create an accurate timeline for either year view or lifetime
+  const years = Array.from(
+    new Set(data.map((d) => new Date(d.date).getFullYear())),
+  ).sort(d3.ascending);
+
   // Generate date timestamps for each week in the given year, this will help to smoothen the chart
   // lines and avoid a curve from the axis extents when only 1 or 2 data points are present in a year
   // TODO: Test this implementation with bi-weekly generation and decide which is more suitable
@@ -54,7 +59,9 @@ const HorizonChart = ({ data }: HorizonChartProps) => {
     }
 
     return dates;
-  })(2026, 2026).map((date) => date.getTime());
+  })(years[0], years.length > 1 ? new Date().getFullYear() : years[0]).map(
+    (date) => date.getTime(),
+  );
 
   //! Do not remove, i think because of switching from SSR to api fetching this component was expecting date objects not date strings
   const parsedData = data.map((d) => ({
