@@ -11,6 +11,14 @@ const HorizonChart = ({ data }: HorizonChartProps) => {
   const margins = { top: 30, right: 20, bottom: 30, left: 120 };
   const overlap = 1; // Adjust this value to control the amount of overlap between layers
   const [svgDimensions, setSvgDimensions] = useState({ height: 0, width: 0 });
+  const [tooltip, setTooltip] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    content: "",
+  });
   const horizonSvgRef = useRef<SVGSVGElement | null>(null);
   const xAxisRef = useRef<SVGGElement | null>(null);
   const yAxisRef = useRef<SVGGElement | null>(null);
@@ -129,11 +137,78 @@ const HorizonChart = ({ data }: HorizonChartProps) => {
     }
   }, [svgDimensions.height, svgDimensions.width]);
 
+  const handleMouseMove = (event: React.MouseEvent<SVGSVGElement>) => {
+    const svgElement = horizonSvgRef.current;
+    if (!svgElement) return;
+
+    const { left, top } = svgElement.getBoundingClientRect();
+    const mouseX = event.clientX - left;
+    const mouseY = event.clientY - top;
+
+    const closestDate = d3.least(combinedDates, (d) =>
+      Math.abs(xScale(d) - mouseX),
+    );
+
+    const cityName = yScale.domain().find((city) => {
+      const cityY = yScale(city);
+      return cityY && Math.abs(cityY - mouseY) < yScale.step() / 2;
+    });
+
+    if (closestDate && cityName) {
+      const cityData = series.find((s) => s.cityName === cityName);
+      const value = cityData?.values[combinedDates.indexOf(closestDate)] || 0;
+
+      // Use what we already have to calculate the text size from a sacrificial lamb
+      const svg = d3.select(horizonSvgRef.current);
+      const tempText = svg
+        .append("text")
+        .attr("font-size", 12)
+        .text(
+          `${cityName} \n ${d3.timeFormat("%B %d, %Y")(new Date(closestDate))} \n Sightings: ${value}`,
+        );
+
+      const textBBox = tempText.node()!.getBBox();
+      const [rectWidth, rectHeight] = [
+        textBBox.width + 10 * 4, // Probably due to text rendering stuff with too little or no padding the rect will be smaller than the text
+        textBBox.height * 3 + 10 * 2,
+      ];
+      tempText.remove(); // The lamb is sacrificed, onward to a new era
+
+      // Clamp the tooltip top position so it doesn't clip outside the svg on tall bars
+      const tooltipY = yScale(cityName)! - 10;
+      const minY = rectHeight + 20; // Minimum y position to avoid clipping, 10 meets the edges of the svg but 20 gives nicer padding
+
+      setTooltip({
+        visible: true,
+        x: xScale(closestDate),
+        y: Math.max(tooltipY, minY),
+        width: rectWidth,
+        height: rectHeight,
+        content: `${cityName} \n ${d3.timeFormat("%B %d, %Y")(
+          new Date(closestDate),
+        )} \n Sightings: ${value}`,
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip({
+      visible: false,
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      content: "",
+    });
+  };
+
   return (
     <svg
       ref={horizonSvgRef}
       className="w-full bg-white"
-      style={{ height: `${svgDimensions.height}px` }} // Set dynamic height here
+      style={{ height: `${svgDimensions.height}px` }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       <g
         ref={xAxisRef}
@@ -146,6 +221,48 @@ const HorizonChart = ({ data }: HorizonChartProps) => {
           <path fill="none" stroke="black" d={linePath[i].path || ""} />
         </g>
       ))}
+      {tooltip.visible && (
+        <g
+          transform={`translate(${tooltip.x - tooltip.width / 2}, ${tooltip.y - tooltip.height - 10})`}
+          pointerEvents="none"
+        >
+          <rect
+            width={tooltip.width}
+            height={tooltip.height}
+            fill="white"
+            stroke="#ccc"
+            rx={4}
+            ry={4}
+          />
+          <text
+            // Center the text horizontally and vertically and adjust for font and lines
+            x={tooltip.width / 2}
+            y={
+              tooltip.height / 2 - (tooltip.content.split("\n").length - 1) * 6
+            }
+            textAnchor="middle"
+            fill="#333"
+          >
+            {tooltip.content.split("\n").map((line, index) => (
+              <tspan
+                key={index}
+                x={tooltip.width / 2}
+                dy={index === 0 ? "0" : "1.2em"}
+              >
+                {line}
+              </tspan>
+            ))}
+          </text>
+          <path
+            d={`M${tooltip.width / 2 - 5},${tooltip.height} 
+          L${tooltip.width / 2},${tooltip.height + 6} 
+          L${tooltip.width / 2 + 5},${tooltip.height} 
+          Z`}
+            fill="white"
+            stroke="#ccc"
+          />
+        </g>
+      )}
     </svg>
   );
 };
