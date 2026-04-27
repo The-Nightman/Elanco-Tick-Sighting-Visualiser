@@ -5,6 +5,7 @@ import TimeControls from "@/components/Button/TimeControls/TimeControls";
 import OverviewCardsCity from "@/components/Cards/OverViewCards/OverviewCardsCity";
 import TickCountCard from "@/components/Cards/TickCountCard/TickCountCard";
 import Histogram from "@/components/Charts/Histogram/Histogram";
+import HistogramStacked from "@/components/Charts/HistogramStacked/HistorgramStacked";
 import Tab from "@/components/Tabs/Tab/Tab";
 import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
 import { CitypageData } from "@/interfaces/CitypageData";
@@ -14,6 +15,7 @@ import { useEffect, useState } from "react";
 const dataPlaceHolder = {
   tickCardData: [],
   histogramData: [],
+  stackedHistogramData: [],
   overviewCardsData: {
     sightingsReports: {
       sightingsPastMonth: 0,
@@ -168,6 +170,38 @@ const CityPage = () => {
                           return {
                             date,
                             count: matchingData ? matchingData.count : 0,
+                          };
+                        })
+                  }
+                />
+              </div>
+            </div>
+          </Tab>
+          <Tab label="Sightings by species">
+            <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
+              <h3 className="text-2xl text-white font-semibold">
+                Sightings by species through {controlsState.selectedYear}
+              </h3>
+              <div className="flex-1">
+                <HistogramStacked
+                  // generate date strings for each month of the year to gap-fill database results so that all months are represented
+                  data={
+                    controlsState.period === "max"
+                      ? data.stackedHistogramData
+                      : Array.from({ length: 12 }, (_, m) => {
+                          const date = new Date(
+                            controlsState.selectedYear,
+                            m,
+                            1,
+                          );
+                          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
+                        }).map((date) => {
+                          const matchingData = data.stackedHistogramData.find(
+                            (d) => d.date === date,
+                          );
+                          return {
+                            date,
+                            data: matchingData ? matchingData.data : [],
                           };
                         })
                   }

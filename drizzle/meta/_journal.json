@@ -22,6 +22,13 @@
       "when": 1773883676192,
       "tag": "0002_equal_captain_cross",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1777254657507,
+      "tag": "0003_flashy_wrecker",
+      "breakpoints": true
     }
   ]
 }
