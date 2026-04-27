@@ -3,6 +3,7 @@ import { sightings, species } from "@/db/schema";
 import { CitypageData } from "@/interfaces/CitypageData";
 import { HistogramData } from "@/interfaces/HistogramData";
 import { OverviewCardsCityData } from "@/interfaces/OverviewCardsCityData";
+import { StackedHistogramData } from "@/interfaces/StackedHistogramData";
 import { TickCardData } from "@/interfaces/TickCardData";
 import { and, asc, between, eq, max, min, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -79,6 +80,33 @@ export async function GET(
     )
     .groupBy(histogramMonthBucket)
     .orderBy(asc(histogramMonthBucket));
+
+  const stackedHistogramData: StackedHistogramData[] = await db
+    .select({
+      date: histogramMonthBucket,
+      speciesName: species.speciesName,
+      count: sql<number>`COUNT(*)`,
+    })
+    .from(sightings)
+    .innerJoin(species, eq(sightings.speciesId, species.id))
+    .where(between(sightings.sightingDate, startOfYear, endOfYear))
+    .groupBy(histogramMonthBucket, species.speciesName)
+    .orderBy(asc(histogramMonthBucket), asc(species.speciesName))
+    .then((data) => {
+      const groupedData: Record<
+        string,
+        { date: string; data: { speciesName: string; count: number }[] }
+      > = {};
+
+      data.forEach(({ date, speciesName, count }) => {
+        if (!groupedData[date]) {
+          groupedData[date] = { date, data: [] };
+        }
+        groupedData[date].data.push({ speciesName, count });
+      });
+
+      return Object.values(groupedData);
+    });
 
   const [sightingsReports] = await db
     .select({
@@ -254,6 +282,7 @@ export async function GET(
   const citypageData: CitypageData = {
     tickCardData,
     histogramData,
+    stackedHistogramData,
     overviewCardsData,
   };
 
