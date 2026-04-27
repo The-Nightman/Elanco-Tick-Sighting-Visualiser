@@ -18,6 +18,7 @@ import HistogramStacked from "@/components/Charts/HistogramStacked/HistorgramSta
 const dataPlaceHolder = {
   tickCardData: [],
   histogramData: [],
+  stackedHistogramData: [],
   horizonData: [],
   overviewCardsData: {
     sightingsReports: {
@@ -181,14 +182,14 @@ const page = () => {
           <Tab label="Sightings by species">
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
-                Sightings by species through {currentYear}
+                Sightings by species through {controlsState.selectedYear}
               </h3>
               <div className="flex-1">
                 <HistogramStacked
                   // generate date strings for each month of the year to gap-fill database results so that all months are represented
                   data={
                     controlsState.period === "max"
-                      ? data.histogramData
+                      ? data.stackedHistogramData
                       : Array.from({ length: 12 }, (_, m) => {
                           const date = new Date(
                             controlsState.selectedYear,
@@ -197,12 +198,12 @@ const page = () => {
                           );
                           return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
                         }).map((date) => {
-                          const matchingData = data.histogramData.find(
+                          const matchingData = data.stackedHistogramData.find(
                             (d) => d.date === date,
                           );
                           return {
                             date,
-                            count: matchingData ? matchingData.count : 0,
+                            data: matchingData ? matchingData.data : [],
                           };
                         })
                   }
