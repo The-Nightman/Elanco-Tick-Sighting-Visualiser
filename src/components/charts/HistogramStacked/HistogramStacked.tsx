@@ -40,7 +40,7 @@ const HistogramStacked = ({ data }: HistogramStackedProps) => {
       0,
       d3.max(
         [...data, { data: [{ speciesName: "", count: 5 }], date: "" }],
-        (d) => d3.max(d.data, (s) => s.count) ?? 0,
+        (d) => d.data.reduce((sum, species) => sum + species.count, 0), // Sum counts for each date
       ) ?? 0,
     ],
     [svgDimensions.height - margins.bottom, margins.top],
@@ -66,6 +66,7 @@ const HistogramStacked = ({ data }: HistogramStackedProps) => {
   const handleMouseEnter = (
     d: StackedHistogramData,
     s: { speciesName: string; count: number; colour: string },
+    cumulativeHeight: number,
   ) => {
     const svg = d3.select(histogramSvgRef.current);
     const tempText = svg
@@ -83,7 +84,7 @@ const HistogramStacked = ({ data }: HistogramStackedProps) => {
     tempText.remove();
 
     // Clamp the tooltip top position so it doesn't clip outside the svg on tall bars
-    const tooltipY = yScale(s.count) - 10;
+    const tooltipY = yScale(s.count + cumulativeHeight) - 10; // Offset to position above the stack
     const minY = rectHeight + 20; // Minimum y position to avoid clipping
 
     setTooltip({
@@ -110,38 +111,50 @@ const HistogramStacked = ({ data }: HistogramStackedProps) => {
   return (
     <svg ref={histogramSvgRef} className="w-full h-full bg-white">
       <g>
-        {data.map((d) => (
-          <g key={d.date}>
-            {d.data.map((s, i) => (
-              <g key={`${s.speciesName}-${i}-${d.date}-${s.count}`}>
-                <rect
-                  x={xScale(d.date)}
-                  y={yScale(s.count)}
-                  width={xScale.bandwidth()}
-                  height={yScale(0) - yScale(s.count)}
-                  fill={`${s.colour}99`}
-                  stroke={s.colour}
-                  onMouseEnter={() => handleMouseEnter(d, s)}
-                  onMouseLeave={handleMouseLeave}
-                />
-                <text
-                  // Add "tick mark" labels with bars for better general user accessibility than y-axis ticks for a "simpler" chart
-                  x={(xScale(d.date) ?? 0) + xScale.bandwidth() / 2}
-                  y={Math.max(margins.top + 12, yScale(s.count) - 6)}
-                  textAnchor="middle"
-                  fontSize={11}
-                  fill="#111827"
-                >
-                  {s.count}
-                </text>
-              </g>
-            ))}
-          </g>
-        ))}
+        {data.map((d) => {
+          let cumulativeHeight = 0;
+          return (
+            <g key={d.date}>
+              {d.data.map((s, i) => {
+                const barHeight = yScale(0) - yScale(s.count); // Calculate the height of the current bar
+                const barY = yScale(s.count + cumulativeHeight); // Position the bar based on cumulative height
+                cumulativeHeight += s.count; // Update cumulative height for the next bar
+                return (
+                  <g key={`${s.speciesName}-${i}-${d.date}-${s.count}`}>
+                    <rect
+                      x={xScale(d.date)}
+                      y={barY}
+                      width={xScale.bandwidth()}
+                      height={barHeight}
+                      fill={`${s.colour}99`}
+                      stroke={s.colour}
+                      onMouseEnter={() =>
+                        handleMouseEnter(d, s, cumulativeHeight - s.count)
+                      }
+                      onMouseLeave={handleMouseLeave}
+                    />
+                    <text
+                      // Add "tick mark" labels with bars for better general user accessibility than y-axis ticks for a "simpler" chart
+                      x={(xScale(d.date) ?? 0) + xScale.bandwidth() / 2}
+                      y={barY + barHeight / 2}
+                      textAnchor="middle"
+                      fontSize={11}
+                      fill="#111827"
+                      pointerEvents="none"
+                    >
+                      {s.count}
+                    </text>
+                  </g>
+                );
+              })}
+            </g>
+          );
+        })}
       </g>
       {tooltip.visible && (
         <g
           transform={`translate(${tooltip.x - tooltip.width / 2}, ${tooltip.y - tooltip.height - 10})`}
+          pointerEvents="none"
         >
           <rect
             width={tooltip.width}
