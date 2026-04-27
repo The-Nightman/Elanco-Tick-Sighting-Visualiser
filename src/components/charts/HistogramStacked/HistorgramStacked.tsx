@@ -61,13 +61,14 @@ const HistogramStacked = ({ data }: HistogramStackedProps) => {
         {data.map((d) => (
           <g key={d.date}>
             {d.data.map((s, i) => (
-              <g>
+              <g key={`${s.speciesName}-${i}-${d.date}-${s.count}`}>
                 <rect
                   x={xScale(d.date)}
                   y={yScale(s.count)}
                   width={xScale.bandwidth()}
                   height={yScale(0) - yScale(s.count)}
-                  fill="steelblue"
+                  fill={`${s.colour}99`}
+                  stroke={s.colour}
                 />
                 <text
                   // Add "tick mark" labels with bars for better general user accessibility than y-axis ticks for a "simpler" chart
