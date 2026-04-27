@@ -151,18 +151,26 @@ const CityPage = () => {
               <div className="flex-1">
                 <Histogram
                   // generate date strings for each month of the year to gap-fill database results so that all months are represented
-                  data={Array.from({ length: 12 }, (_, m) => {
-                    const date = new Date(controlsState.selectedYear, m, 1);
-                    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
-                  }).map((date) => {
-                    const matchingData = data.histogramData.find(
-                      (d) => d.date === date,
-                    );
-                    return {
-                      date,
-                      count: matchingData ? matchingData.count : 0,
-                    };
-                  })}
+                  data={
+                    controlsState.period === "max"
+                      ? data.histogramData
+                      : Array.from({ length: 12 }, (_, m) => {
+                          const date = new Date(
+                            controlsState.selectedYear,
+                            m,
+                            1,
+                          );
+                          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
+                        }).map((date) => {
+                          const matchingData = data.histogramData.find(
+                            (d) => d.date === date,
+                          );
+                          return {
+                            date,
+                            count: matchingData ? matchingData.count : 0,
+                          };
+                        })
+                  }
                 />
               </div>
             </div>
