@@ -148,7 +148,12 @@ const CityPage = () => {
           <Tab label="Sightings over time">
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
-                Sightings through {controlsState.selectedYear}
+                <span className="block">
+                  Sightings through {controlsState.selectedYear}
+                </span>
+                <span className="block text-base text-neutral-300">
+                  (Hover for more details)
+                </span>
               </h3>
               <div className="flex-1">
                 <Histogram
