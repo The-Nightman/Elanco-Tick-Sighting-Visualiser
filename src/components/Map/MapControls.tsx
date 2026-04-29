@@ -61,7 +61,7 @@ const MapControls = ({ setMapData }: MapControlsProps) => {
   }, [controlsState.period, controlsState.selectedYear]);
 
   return (
-    <div className="absolute top-0 right-0 flex h-full">
+    <div className="absolute top-0 right-0 flex h-full z-1000">
       <button
         className="bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-500 w-6 h-12 rounded-l-xl self-center cursor-pointer"
         aria-expanded={controlsState.visible}
