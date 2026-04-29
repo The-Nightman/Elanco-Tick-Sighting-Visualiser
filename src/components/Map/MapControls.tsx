@@ -97,7 +97,7 @@ const MapControls = ({ setMapData }: MapControlsProps) => {
     };
 
     apiQuery(queryBuilder());
-  }, [controlsState.period, controlsState.selectedYear]);
+  }, [controlsState.period, controlsState.selectedYear, controlsState.viewBySpecies, JSON.stringify(controlsState.selectedSpecies)]);
 
   return (
     <div className="max-xl:absolute max-xl:top-0 max-xl:right-0 flex h-full max-h-full z-1000">
