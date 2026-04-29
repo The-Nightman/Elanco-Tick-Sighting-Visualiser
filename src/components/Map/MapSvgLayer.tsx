@@ -9,20 +9,16 @@ const data = geoJson as GeoJSON.FeatureCollection; // 2025 Lower Tier Local Auth
 
 /**
  * D3-Leaflet combination leaflet map content layer for dataViz
- * 
+ *
  * IMPORTANT! for general info around the code inside this component read this:
  * https://observablehq.com/@sfu-iat355/intro-to-leaflet-d3-interactivity
- * 
+ *
  * @param {Object} props - The component props
  * @param {MapSightingData[]} props.sightingData - The data array for the sightings to be visualized on the map
- * 
+ *
  * @returns Map svg layer component with content
  */
-const MapSvgLayer = ({
-  sightingData,
-}: {
-  sightingData: MapSightingData[];
-}) => {
+const MapSvgLayer = ({ sightingData }: { sightingData: MapSightingData[] }) => {
   const map = useMap();
 
   useEffect(() => {
@@ -31,13 +27,6 @@ const MapSvgLayer = ({
     // Adding an svg layer any other way does not work, it has to be done following this:
     // https://observablehq.com/@sfu-iat355/intro-to-leaflet-d3-interactivity#WesternCanadianCities
     L.svg().addTo(map);
-
-    // We need to add a seperate pane for geojson boundaries or else it renders over the bubbles
-    if (!map.getPane("geoPane")) {
-      map.createPane("geoPane");
-      map.getPane("geoPane")!.style.zIndex = "200";
-      map.getPane("geoPane")!.style.pointerEvents = "none";
-    }
 
     const overlay = d3.select(map.getPanes().overlayPane);
     const svg = overlay.select("svg").style("pointer-events", "auto");
@@ -71,19 +60,6 @@ const MapSvgLayer = ({
       .append("path")
       .attr("fill", "white")
       .attr("stroke", "#ccc");
-
-    const geoFeatures = L.geoJSON(data, {
-      pane: "geoPane",
-      style: {
-        fill: false,
-        color: "#0000004D",
-        weight: 1,
-        opacity: 0.25,
-      },
-    }).addTo(map);
-
-    // Center and zoom the map to fit the geojson boundaries, this is way better trying to fine tune a zoom level
-    map.fitBounds(geoFeatures.getBounds());
 
     // Bubble scaling sourced from: https://observablehq.com/@d3/bubble-map/2
     const radiusScale = d3
@@ -152,6 +128,31 @@ const MapSvgLayer = ({
       map.off("move zoom resize", update);
     };
   }, [map, sightingData]);
+
+  // We need to segregate the geoJson logic because if not then changing options in the MapControls caused another draw each time state changes
+  useEffect(() => {
+    if (!map) return;
+
+    // We need to add a seperate pane for geojson boundaries or else it renders over the bubbles
+    if (!map.getPane("geoPane")) {
+      map.createPane("geoPane");
+      map.getPane("geoPane")!.style.zIndex = "200";
+      map.getPane("geoPane")!.style.pointerEvents = "none";
+    }
+
+    const geoFeatures = L.geoJSON(data, {
+      pane: "geoPane",
+      style: {
+        fill: false,
+        color: "#0000004D",
+        weight: 1,
+        opacity: 0.25,
+      },
+    }).addTo(map);
+
+    // Center and zoom the map to fit the geojson boundaries, this is way better trying to fine tune a zoom level
+    map.fitBounds(geoFeatures.getBounds());
+  }, [map]);
 
   return null;
 };
