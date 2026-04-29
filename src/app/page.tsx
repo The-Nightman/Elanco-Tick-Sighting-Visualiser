@@ -6,7 +6,6 @@ import HorizonChart from "@/components/Charts/HorizonChart/HorizonChart";
 import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
 import Tab from "@/components/Tabs/Tab/Tab";
 import SearchBar from "@/components/SearchBar/SearchBar";
-import D3Map from "@/components/Map/D3Map";
 import OverviewCardsHome from "@/components/Cards/OverViewCards/OverviewCardsHome";
 import Link from "next/link";
 import DownloadButton from "@/components/Button/DownloadButton/DownloadButton";
@@ -14,8 +13,17 @@ import TimeControls from "@/components/Button/TimeControls/TimeControls";
 import { useEffect, useState } from "react";
 import { HomepageData } from "@/interfaces/HomepageData";
 import HistogramStacked from "@/components/Charts/HistogramStacked/HistogramStacked";
+import dynamic from "next/dynamic";
 
-const dataPlaceHolder = {
+// The component needs to be imported like this or we will get errors about window
+// not being defined and the map just will not function correctly.
+// See: https://github.com/PaulLeCam/react-leaflet/issues/69
+// https://github.com/PaulLeCam/react-leaflet/issues/69#issuecomment-2785888317
+const D3Map = dynamic(() => import("@/components/Map/D3Map"), {
+  ssr: false,
+});
+
+const dataPlaceHolder: HomepageData = {
   tickCardData: [],
   histogramData: [],
   stackedHistogramData: [],
@@ -151,7 +159,10 @@ const page = () => {
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
                 <span className="block">
-                  Sightings through {controlsState.period === "max" ? "lifetime" : controlsState.selectedYear}
+                  Sightings through{" "}
+                  {controlsState.period === "max"
+                    ? "lifetime"
+                    : controlsState.selectedYear}
                 </span>
                 <span className="block text-base text-neutral-300">
                   (Hover for more details)
@@ -188,7 +199,10 @@ const page = () => {
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
                 <span className="block">
-                  Sightings by species through {controlsState.period === "max" ? "lifetime" : controlsState.selectedYear}
+                  Sightings by species through{" "}
+                  {controlsState.period === "max"
+                    ? "lifetime"
+                    : controlsState.selectedYear}
                 </span>
                 <span className="block text-base text-neutral-300">
                   (Hover for more details)
@@ -225,7 +239,11 @@ const page = () => {
             <div className="w-full h-fit pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
                 <span className="block">
-                  Sightings through {controlsState.period === "max" ? "lifetime" : controlsState.selectedYear} by City
+                  Sightings through{" "}
+                  {controlsState.period === "max"
+                    ? "lifetime"
+                    : controlsState.selectedYear}{" "}
+                  by City
                 </span>
                 <span className="block text-base text-neutral-300">
                   (Hover for more details)
