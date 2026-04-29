@@ -15,7 +15,7 @@ const D3Map = () => {
   const [sightingData, setSightingData] = useState<MapSightingData[]>([]);
 
   return (
-    <div id="map" className={`relative w-full h-[${height}px] max-w-full`}>
+    <div id="map" className={`relative xl:flex w-full h-[${height}px] max-h-[${height}px] max-w-full`}>
       <MapContainer
         center={[54.093409, -2.89479]}
         scrollWheelZoom={true}

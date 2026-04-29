@@ -8,11 +8,38 @@ interface MapControlsProps {
 }
 
 const MapControls = ({ setMapData }: MapControlsProps) => {
+  const [speciesList, setSpeciesList] = useState<
+    { id: number; speciesName: string; colour: string }[]
+  >([]);
   const [controlsState, setControlsState] = useState({
     visible: false,
     period: "month",
     selectedYear: new Date().getFullYear(),
+    viewBySpecies: false,
+    selectedSpecies: [] as number[],
   });
+
+  useEffect(() => {
+    const apiQuery = async () => {
+      const res = await fetch("/api/ticks/getSpecies");
+      const data: {
+        id: number;
+        speciesName: string;
+        latinName: string;
+        colour: string;
+        invasiveStatus: boolean;
+      }[] = await res.json();
+
+      setSpeciesList(
+        data.map((item) => ({
+          id: item.id,
+          speciesName: item.speciesName,
+          colour: item.colour,
+        })),
+      );
+    };
+    apiQuery();
+  }, []);
 
   useEffect(() => {
     const apiQuery = async (query: string) => {
@@ -61,9 +88,9 @@ const MapControls = ({ setMapData }: MapControlsProps) => {
   }, [controlsState.period, controlsState.selectedYear]);
 
   return (
-    <div className="absolute top-0 right-0 flex h-full z-1000">
+    <div className="max-xl:absolute max-xl:top-0 max-xl:right-0 flex h-full max-h-full z-1000">
       <button
-        className="bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-500 w-6 h-12 rounded-l-xl self-center cursor-pointer"
+        className="xl:hidden bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-500 w-6 h-12 rounded-l-xl self-center cursor-pointer"
         aria-expanded={controlsState.visible}
         aria-controls="map-controls"
         aria-label={
@@ -128,9 +155,9 @@ const MapControls = ({ setMapData }: MapControlsProps) => {
       {controlsState.visible && (
         <form
           id="map-controls"
-          className="h-full bg-neutral-800 text-white px-6 py-4"
+          className="flex h-full min-h-0 w-80 flex-col overflow-hidden bg-neutral-800 px-6 py-4 text-white"
         >
-          <fieldset className="flex flex-col text-lg gap-4">
+          <fieldset className="shrink-0 flex flex-col gap-4 text-lg">
             <div className="flex gap-[0.1rem]">
               <div className="group">
                 <div className="w-11 bg-neutral-600 group-[&:has(input:checked)]:bg-sky-600 text-center cursor-pointer select-none rounded-l-md">
@@ -150,7 +177,6 @@ const MapControls = ({ setMapData }: MapControlsProps) => {
                   </label>
                 </div>
               </div>
-
               <div className="group">
                 <div className="w-11 bg-neutral-600 group-[&:has(input:checked)]:bg-sky-600 text-center cursor-pointer select-none">
                   <input
@@ -169,7 +195,6 @@ const MapControls = ({ setMapData }: MapControlsProps) => {
                   </label>
                 </div>
               </div>
-
               <div className="group">
                 <div className="w-11 bg-neutral-600 group-[&:has(input:checked)]:bg-sky-600 text-center cursor-pointer select-none">
                   <input
@@ -188,7 +213,6 @@ const MapControls = ({ setMapData }: MapControlsProps) => {
                   </label>
                 </div>
               </div>
-
               <div className="group">
                 <div className="w-11 bg-neutral-600 group-[&:has(input:checked)]:bg-sky-600 text-center cursor-pointer select-none">
                   <input
@@ -207,7 +231,6 @@ const MapControls = ({ setMapData }: MapControlsProps) => {
                   </label>
                 </div>
               </div>
-
               <div className="group">
                 <div className="w-11 bg-neutral-600 group-[&:has(input:checked)]:bg-sky-600 text-center cursor-pointer select-none">
                   <input
@@ -279,6 +302,70 @@ const MapControls = ({ setMapData }: MapControlsProps) => {
                   </option>
                 ))}
               </select>
+            </div>
+          </fieldset>
+          <fieldset className="mt-6 flex min-h-0 flex-1 flex-col gap-4 overflow-hidden text-lg">
+            <legend className="mt-4 mb-2 text-lg shrink-0">Species:</legend>
+            {/* Switch sourced from: https://www.material-tailwind.com/docs/html/switch */}
+            <div className="inline-flex items-center gap-2 shrink-0">
+              <div className="relative inline-block w-11 h-5">
+                <input
+                  id="species-switch"
+                  type="checkbox"
+                  className="peer appearance-none w-11 h-5 bg-slate-100 rounded-full checked:bg-sky-600 cursor-pointer transition-colors duration-300"
+                  checked={controlsState.viewBySpecies}
+                  onChange={(e) =>
+                    setControlsState({
+                      ...controlsState,
+                      viewBySpecies: e.target.checked,
+                    })
+                  }
+                />
+                <label
+                  htmlFor="species-switch"
+                  className="absolute top-0 left-0 w-5 h-5 bg-white rounded-full border border-slate-300 shadow-sm transition-transform duration-300 peer-checked:translate-x-6 peer-checked:border-slate-800 cursor-pointer"
+                />
+              </div>
+              <label htmlFor="species-switch">View by Species</label>
+            </div>
+            <div className="ml-4 min-h-0 flex-1 overflow-y-auto text-base">
+              {speciesList.map((species) => (
+                <div key={species.id} className="flex gap-2">
+                  <input
+                    type="checkbox"
+                    name="species"
+                    id={`species${species.id}`}
+                    className="peer"
+                    disabled={!controlsState.viewBySpecies}
+                    value={species.id}
+                    checked={controlsState.selectedSpecies.includes(species.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setControlsState({
+                          ...controlsState,
+                          selectedSpecies: [
+                            ...controlsState.selectedSpecies,
+                            species.id,
+                          ],
+                        });
+                      } else {
+                        setControlsState({
+                          ...controlsState,
+                          selectedSpecies: controlsState.selectedSpecies.filter(
+                            (id) => id !== species.id,
+                          ),
+                        });
+                      }
+                    }}
+                  />
+                  <label
+                    htmlFor={`species${species.id}`}
+                    className="peer-disabled:text-neutral-500"
+                  >
+                    {species.speciesName}
+                  </label>
+                </div>
+              ))}
             </div>
           </fieldset>
         </form>
