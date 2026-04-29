@@ -4,4 +4,5 @@ export interface MapSightingData {
   value: number;
   lat: number;
   lon: number;
+  species: { speciesName: string; count: number; colour: string }[];
 }
