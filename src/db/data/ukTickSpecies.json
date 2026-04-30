@@ -1,82 +1,122 @@
 [
   {
     "speciesName": "Southern rodent tick",
-    "latinName": "Ixodes acuminatus"
+    "latinName": "Ixodes acuminatus",
+    "colour": "#FF5733",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Marsh tick",
-    "latinName": "Ixodes apronophorus"
+    "latinName": "Ixodes apronophorus",
+    "colour": "#33FF57",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Tree-hole tick",
-    "latinName": "Ixodes arboricola"
+    "latinName": "Ixodes arboricola",
+    "colour": "#3357FF",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Fox/badger tick",
-    "latinName": "Ixodes canisuga"
+    "latinName": "Ixodes canisuga",
+    "colour": "#FF33A1",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Passerine tick",
-    "latinName": "Dermacentor frontalis"
+    "latinName": "Dermacentor frontalis",
+    "colour": "#A133FF",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Hedgehog tick",
-    "latinName": "Ixodes hexagonus"
+    "latinName": "Ixodes hexagonus",
+    "colour": "#33FFF5",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Sand martin tick",
-    "latinName": "Ixodes lividus"
+    "latinName": "Ixodes lividus",
+    "colour": "#F5FF33",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Sheep/deer tick",
-    "latinName": "Ixodes ricinus"
+    "latinName": "Ixodes ricinus",
+    "colour": "#FF8C33",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Puffin tick",
-    "latinName": "Ixodes rothschildi"
+    "latinName": "Ixodes rothschildi",
+    "colour": "#33FF8C",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Cormorant tick",
-    "latinName": "Ixodes unicavatus"
+    "latinName": "Ixodes unicavatus",
+    "colour": "#8C33FF",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Rabbit tick",
-    "latinName": "Ixodes ventalloi"
+    "latinName": "Ixodes ventalloi",
+    "colour": "#FF338C",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Long-legged bat tick",
-    "latinName": "Ixodes vespertilionis"
+    "latinName": "Ixodes vespertilionis",
+    "colour": "#33A1FF",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Seabird tick",
-    "latinName": "Ixodes uriae"
+    "latinName": "Ixodes uriae",
+    "colour": "#A1FF33",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Shrew tick",
-    "latinName": "Ixodes trianguliceps"
+    "latinName": "Ixodes trianguliceps",
+    "colour": "#FF5733",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Northern bird tick",
-    "latinName": "Ixodes caledonicus"
+    "latinName": "Ixodes caledonicus",
+    "colour": "#33FF57",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Ornate cow tick",
-    "latinName": "Dermacentor reticulatus"
+    "latinName": "Dermacentor reticulatus",
+    "colour": "#3357FF",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Red sheep tick",
-    "latinName": "Haemaphysalis punctata"
+    "latinName": "Haemaphysalis punctata",
+    "colour": "#FF33A1",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Marine argasid tick",
-    "latinName": "Carios maritimus"
+    "latinName": "Carios maritimus",
+    "colour": "#A133FF",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Pigeon tick",
-    "latinName": "Argas reflexus"
+    "latinName": "Argas reflexus",
+    "colour": "#33FFF5",
+    "invasiveStatus": false
   },
   {
     "speciesName": "Blyborough tick",
-    "latinName": "Argas vespertilionis"
+    "latinName": "Argas vespertilionis",
+    "colour": "#F5FF33",
+    "invasiveStatus": false
   }
 ]

@@ -1,64 +1,113 @@
-"use server";
+"use client";
 
-import { db } from "@/db";
-import { cities, sightings, species } from "@/db/schema";
-import { asc, between, eq, sql, max } from "drizzle-orm";
-import TickCountCard from "./components/cards/TickCountCard";
-import Histogram from "./components/charts/histogram/Histogram";
-import HorizonChart from "./components/charts/HorizonChart";
-import { HorizonData } from "@/interfaces/HorizonData";
-import { HistogramData } from "@/interfaces/HistogramData";
-import { TickCardData } from "@/interfaces/TickCardData";
-import TabGroup from "./components/Tabs/TabGroup/TabGroup";
-import Tab from "./components/Tabs/Tab/Tab";
-import SearchBar from "./components/SearchBar/SearchBar";
+import TickCountCard from "@/components/Cards/TickCountCard/TickCountCard";
+import Histogram from "@/components/Charts/Histogram/Histogram";
+import HorizonChart from "@/components/Charts/HorizonChart/HorizonChart";
+import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
+import Tab from "@/components/Tabs/Tab/Tab";
+import SearchBar from "@/components/SearchBar/SearchBar";
+import OverviewCardsHome from "@/components/Cards/OverViewCards/OverviewCardsHome";
+import Link from "next/link";
+import DownloadButton from "@/components/Button/DownloadButton/DownloadButton";
+import TimeControls from "@/components/Button/TimeControls/TimeControls";
+import { useEffect, useState } from "react";
+import { HomepageData } from "@/interfaces/HomepageData";
+import HistogramStacked from "@/components/Charts/HistogramStacked/HistogramStacked";
+import dynamic from "next/dynamic";
 
-const page = async () => {
+// The component needs to be imported like this or we will get errors about window
+// not being defined and the map just will not function correctly.
+// See: https://github.com/PaulLeCam/react-leaflet/issues/69
+// https://github.com/PaulLeCam/react-leaflet/issues/69#issuecomment-2785888317
+const D3Map = dynamic(() => import("@/components/Map/D3Map"), {
+  ssr: false,
+});
+
+const dataPlaceHolder: HomepageData = {
+  tickCardData: [],
+  histogramData: [],
+  stackedHistogramData: [],
+  horizonData: [],
+  overviewCardsData: {
+    sightingsReports: {
+      sightingsPastMonth: 0,
+      sightingsPastQuarter: 0,
+      sightingsPastYear: 0,
+      reportsThisWeek: 0,
+    },
+    trendData: {
+      pastMonth: {
+        percentageChange: 0,
+        trend: "Stable",
+      },
+      pastSixMonths: {
+        percentageChange: 0,
+        trend: "Stable",
+      },
+      pastYear: {
+        percentageChange: 0,
+        trend: "Stable",
+      },
+    },
+    peakSeason: {
+      quarter: 0,
+      totalSightings: 0,
+    },
+    topRisingLocations: [],
+    mostAffectedSpecies: {
+      yearMostAffectedSpecies: {
+        speciesName: null,
+        sightingCount: 0,
+      },
+      maxMostAffectedSpecies: {
+        speciesName: null,
+        sightingCount: 0,
+      },
+    },
+  },
+};
+
+const page = () => {
   const currentYear = new Date().getFullYear();
-  const startOfYear = new Date(currentYear, 0, 1);
-  const endOfYear = new Date(currentYear, 11, 31);
+  const [data, setData] = useState<HomepageData>(dataPlaceHolder);
+  const [controlsState, setControlsState] = useState({
+    period: "currentYear",
+    selectedYear: currentYear,
+  });
 
-  const tickCardDataQuery: TickCardData[] = (await db
-    .select({
-      sightings: db.$count(sightings, eq(sightings.speciesId, species.id)),
-      species: species.speciesName,
-      latinName: species.latinName,
-      lastReported: max(sightings.sightingDate),
-    })
-    .from(sightings)
-    .innerJoin(species, eq(sightings.speciesId, species.id))
-    .groupBy(species.id)) as TickCardData[]; // Type assertion to fix Date | null error when we know date will always be present
+  useEffect(() => {
+    const apiQuery = async (query: string) => {
+      const res = await fetch(query);
+      const data: HomepageData = await res.json();
+      setData(data);
+    };
 
-  const histogramMonthBucket = sql<string>`DATE_FORMAT(${sightings.sightingDate}, '%Y-%m-01')`;
+    const queryBuilder = () => {
+      let queryUrl = "/api/data/pages/home";
 
-  const histogramData: HistogramData[] = await db
-    .select({
-      date: histogramMonthBucket,
-      count: sql<number>`COUNT(*)`,
-    })
-    .from(sightings)
-    .where(between(sightings.sightingDate, startOfYear, endOfYear))
-    .groupBy(histogramMonthBucket)
-    .orderBy(asc(histogramMonthBucket));
+      switch (controlsState.period) {
+        case "currentYear":
+          queryUrl += `?viewYear=${currentYear}`;
+          break;
+        case "selectedYear":
+          queryUrl += `?viewYear=${controlsState.selectedYear}`;
+          break;
+        case "max":
+          queryUrl += `?viewYear=max`;
+          break;
+        default:
+          break;
+      }
 
-  const horizonDataQuery: HorizonData[] = await db
-    .select({
-      cityId: cities.id,
-      cityName: cities.cityName,
-      date: sightings.sightingDate,
-      sightingCount: sql<number>`COUNT(*)`,
-    })
-    .from(sightings)
-    .where(between(sightings.sightingDate, startOfYear, endOfYear))
-    .innerJoin(cities, eq(sightings.cityId, cities.id))
-    .groupBy(cities.id, cities.cityName, sightings.sightingDate)
-    .orderBy(asc(cities.cityName), asc(sightings.sightingDate));
+      return queryUrl;
+    };
 
-  const cityData = await db.select().from(cities);
+    apiQuery(queryBuilder());
+  }, [controlsState.period, controlsState.selectedYear]);
 
   return (
     <>
-      <div className="flex flex-col w-full lg:max-w-3/4 self-center p-4 gap-8">
+      <div className="flex flex-col w-full lg:max-w-3/4 self-center p-4 gap-8 overflow-x-hidden">
         <SearchBar />
         <h2 className="text-4xl font-bold">
           <div>
@@ -67,35 +116,122 @@ const page = async () => {
             sightings
           </div>
         </h2>
-        <section className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">
-          {tickCardDataQuery.map((item, index) => (
-            <TickCountCard
-              key={`tickCard-${item.species}-${index}-TickCountCard`}
-              data={item}
-            />
-          ))}
+        <DownloadButton
+          apiUrl="/api/data/reports"
+          reportName="Ticks_Sightings_National"
+        />
+        <section className="flex flex-col max-w-full gap-4 overflow-x-scroll no-scrollbar justify-center bg-neutral-800 p-4">
+          <h3 className="text-2xl text-white font-semibold">UK sighting map</h3>
+          <D3Map />
+        </section>
+        <div className="flex justify-end">
+          <TimeControls
+            ariaDataName="UK"
+            radioGroupName="tickCards"
+            state={controlsState}
+            setState={setControlsState}
+          />
+        </div>
+        <section className="flex flex-col">
+          {/* Unfortunately the horizontal scroll will not stop overflowing, this is a last resort */}
+          <div className="grid grid-cols-6 gap-4 no-scrollbar">
+            {data.tickCardData.map((item, index) => (
+              <TickCountCard
+                key={`tickCard-${item.species}-${index}-TickCountCard`}
+                data={item}
+              />
+            ))}
+          </div>
+          <Link
+            href="/tick-information"
+            className="text-lg text-blue-500 hover:underline font-medium "
+          >
+            Learn more about ticks species →
+          </Link>
+        </section>
+        <section>
+          <div className="flex bg-neutral-800 items-center gap-2 p-2 mb-2 border-b-sky-600 border-b-4">
+            <h3 className="text-2xl text-white font-semibold">Overview</h3>
+          </div>
+          <OverviewCardsHome data={data.overviewCardsData} />
         </section>
         <TabGroup>
           <Tab label="Sightings over time">
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
-                Sightings through {currentYear}
+                <span className="block">
+                  Sightings through{" "}
+                  {controlsState.period === "max"
+                    ? "lifetime"
+                    : controlsState.selectedYear}
+                </span>
+                <span className="block text-base text-neutral-300">
+                  (Hover for more details)
+                </span>
               </h3>
               <div className="flex-1">
                 <Histogram
                   // generate date strings for each month of the year to gap-fill database results so that all months are represented
-                  data={Array.from({ length: 12 }, (_, m) => {
-                    const date = new Date(currentYear, m, 1);
-                    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
-                  }).map((date) => {
-                    const matchingData = histogramData.find(
-                      (d) => d.date === date,
-                    );
-                    return {
-                      date,
-                      count: matchingData ? matchingData.count : 0,
-                    };
-                  })}
+                  data={
+                    controlsState.period === "max"
+                      ? data.histogramData
+                      : Array.from({ length: 12 }, (_, m) => {
+                          const date = new Date(
+                            controlsState.selectedYear,
+                            m,
+                            1,
+                          );
+                          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
+                        }).map((date) => {
+                          const matchingData = data.histogramData.find(
+                            (d) => d.date === date,
+                          );
+                          return {
+                            date,
+                            count: matchingData ? matchingData.count : 0,
+                          };
+                        })
+                  }
+                />
+              </div>
+            </div>
+          </Tab>
+          <Tab label="Sightings by species">
+            <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
+              <h3 className="text-2xl text-white font-semibold">
+                <span className="block">
+                  Sightings by species through{" "}
+                  {controlsState.period === "max"
+                    ? "lifetime"
+                    : controlsState.selectedYear}
+                </span>
+                <span className="block text-base text-neutral-300">
+                  (Hover for more details)
+                </span>
+              </h3>
+              <div className="flex-1">
+                <HistogramStacked
+                  // generate date strings for each month of the year to gap-fill database results so that all months are represented
+                  data={
+                    controlsState.period === "max"
+                      ? data.stackedHistogramData
+                      : Array.from({ length: 12 }, (_, m) => {
+                          const date = new Date(
+                            controlsState.selectedYear,
+                            m,
+                            1,
+                          );
+                          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
+                        }).map((date) => {
+                          const matchingData = data.stackedHistogramData.find(
+                            (d) => d.date === date,
+                          );
+                          return {
+                            date,
+                            data: matchingData ? matchingData.data : [],
+                          };
+                        })
+                  }
                 />
               </div>
             </div>
@@ -103,29 +239,20 @@ const page = async () => {
           <Tab label="Sightings by city">
             <div className="w-full h-fit pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
-                Sightings through {currentYear} by City
+                <span className="block">
+                  Sightings through{" "}
+                  {controlsState.period === "max"
+                    ? "lifetime"
+                    : controlsState.selectedYear}{" "}
+                  by City
+                </span>
+                <span className="block text-base text-neutral-300">
+                  (Hover for more details)
+                </span>
               </h3>
               <HorizonChart
                 // Include all cities in the data even with no sightings in the given timeframe
-                data={cityData
-                  .flatMap((city) => {
-                    const citySightings = horizonDataQuery.filter(
-                      (data) => data.cityId === city.id,
-                    );
-                    // Find sightings for this city, if none exist, return a default entry with 0 so it is included in the chart
-                    if (citySightings.length === 0) {
-                      return [
-                        {
-                          cityId: city.id,
-                          cityName: city.cityName,
-                          date: startOfYear,
-                          sightingCount: 0,
-                        },
-                      ];
-                    }
-                    return citySightings;
-                  })
-                  .sort((a, b) => a.cityName.localeCompare(b.cityName))}
+                data={data.horizonData}
               />
             </div>
           </Tab>

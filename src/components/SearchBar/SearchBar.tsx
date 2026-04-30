@@ -1,6 +1,6 @@
 "use client";
 
-import useDebounce from "@/app/hooks/useDebounce";
+import useDebounce from "@/hooks/useDebounce";
 import { CityData } from "@/interfaces/CityData";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -24,10 +24,10 @@ const SearchBar = () => {
   }, [debouncedSearchTerm]);
 
   return (
-    <div className="flex flex-col w-fit self-center">
+    <div className="flex flex-col w-full max-w-3xl mx-auto px-4">
       <div className="relative">
         <input
-          className="w-3xl px-4 py-1 text-xl border rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="w-full px-4 py-2 text-lg border rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
           type="text"
           placeholder="Search for a city"
           value={searchTerm}
@@ -50,7 +50,7 @@ const SearchBar = () => {
       </div>
       <div className="relative">
         {searchResults.length > 0 && (
-          <ul className="absolute z-20 mt-1 max-h-64 w-3xl p-2 overflow-y-auto border border-neutral-300 bg-white shadow-lg">
+          <ul className="absolute z-20 mt-1 max-h-64 w-full p-2 overflow-y-auto border border-neutral-300 bg-white shadow-lg">
             {searchResults.map((result) => (
               <li
                 key={result.id}

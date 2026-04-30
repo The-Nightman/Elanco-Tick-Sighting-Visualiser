@@ -1,62 +1,116 @@
-"use server";
+"use client";
 
-import TickCountCard from "@/app/components/cards/TickCountCard";
-import Histogram from "@/app/components/charts/histogram/Histogram";
-import Tab from "@/app/components/Tabs/Tab/Tab";
-import TabGroup from "@/app/components/Tabs/TabGroup/TabGroup";
-import { db } from "@/db";
-import { cities, sightings, species } from "@/db/schema";
-import { HistogramData } from "@/interfaces/HistogramData";
-import { TickCardData } from "@/interfaces/TickCardData";
-import { asc, between, eq, max, sql } from "drizzle-orm";
-import { notFound } from "next/navigation";
+import DownloadButton from "@/components/Button/DownloadButton/DownloadButton";
+import TimeControls from "@/components/Button/TimeControls/TimeControls";
+import OverviewCardsCity from "@/components/Cards/OverViewCards/OverviewCardsCity";
+import TickCountCard from "@/components/Cards/TickCountCard/TickCountCard";
+import Histogram from "@/components/Charts/Histogram/Histogram";
+import HistogramStacked from "@/components/Charts/HistogramStacked/HistogramStacked";
+import Tab from "@/components/Tabs/Tab/Tab";
+import TabGroup from "@/components/Tabs/TabGroup/TabGroup";
+import { CitypageData } from "@/interfaces/CitypageData";
+import { notFound, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-interface CityPageProps {
-  params: Promise<{
-    cityId: string;
-  }>;
-}
+const dataPlaceHolder = {
+  tickCardData: [],
+  histogramData: [],
+  stackedHistogramData: [],
+  overviewCardsData: {
+    sightingsReports: {
+      sightingsPastMonth: 0,
+      sightingsPastQuarter: 0,
+      sightingsPastYear: 0,
+      reportsThisWeek: 0,
+    },
+    trendData: {
+      pastMonth: {
+        percentageChange: 0,
+        trend: "Stable",
+      },
+      pastSixMonths: {
+        percentageChange: 0,
+        trend: "Stable",
+      },
+      pastYear: {
+        percentageChange: 0,
+        trend: "Stable",
+      },
+    },
+    peakSeason: {
+      quarter: 0,
+      totalSightings: 0,
+    },
+    mostAffectedSpecies: {
+      yearMostAffectedSpecies: {
+        speciesName: null,
+        sightingCount: 0,
+      },
+      maxMostAffectedSpecies: {
+        speciesName: null,
+        sightingCount: 0,
+      },
+    },
+  },
+};
 
-const CityPage = async ({ params }: CityPageProps) => {
-  const { cityId } = await params;
-
-  const [cityData] = await db
-    .select()
-    .from(cities)
-    .where(eq(cities.id, Number(cityId)))
-    .limit(1);
-
-  if (!cityData) {
-    notFound();
-  }
+const CityPage = () => {
+  const { cityId } = useParams();
 
   const currentYear = new Date().getFullYear();
-  const startOfYear = new Date(currentYear, 0, 1);
-  const endOfYear = new Date(currentYear, 11, 31);
+  const [cityData, setCityData] = useState({
+    cityName: "",
+    nation: "",
+  });
+  const [data, setData] = useState<CitypageData>(dataPlaceHolder);
+  const [controlsState, setControlsState] = useState({
+    period: "currentYear",
+    selectedYear: currentYear,
+  });
 
-  const tickCardDataQuery: TickCardData[] = (await db
-    .select({
-      sightings: sql<number>`COUNT(*)`,
-      species: species.speciesName,
-      latinName: species.latinName,
-      lastReported: max(sightings.sightingDate),
-    })
-    .from(sightings)
-    .where(eq(sightings.cityId, Number(cityId)))
-    .innerJoin(species, eq(sightings.speciesId, species.id))
-    .groupBy(species.id)) as TickCardData[]; // Type assertion to fix Date | null error when we know date will always be present
+  useEffect(() => {
+    const cityDataQuery = async () => {
+      const res = await fetch(`/api/cities/${cityId}`);
+      const cityData = await res.json();
+      if (!cityData) {
+        notFound();
+      }
 
-  const histogramMonthBucket = sql<string>`DATE_FORMAT(${sightings.sightingDate}, '%Y-%m-01')`;
+      setCityData({ cityName: cityData.cityName, nation: cityData.nation });
+    };
 
-  const histogramData: HistogramData[] = await db
-    .select({
-      date: histogramMonthBucket,
-      count: sql<number>`COUNT(*)`,
-    })
-    .from(sightings)
-    .where(between(sightings.sightingDate, startOfYear, endOfYear))
-    .groupBy(histogramMonthBucket)
-    .orderBy(asc(histogramMonthBucket));
+    cityDataQuery();
+  }, []);
+
+  useEffect(() => {
+    const apiQuery = async (query: string) => {
+      const res = await fetch(query);
+      const data: CitypageData = await res.json();
+      setData(data);
+    };
+
+    const queryBuilder = () => {
+      let queryUrl = `/api/data/pages/city/${cityId}`;
+
+      switch (controlsState.period) {
+        case "currentYear":
+          queryUrl += `?viewYear=${currentYear}`;
+          break;
+        case "selectedYear":
+          queryUrl += `?viewYear=${controlsState.selectedYear}`;
+          break;
+        case "max":
+          queryUrl += `?viewYear=max`;
+          break;
+        default:
+          break;
+      }
+
+      return queryUrl;
+    };
+
+    apiQuery(queryBuilder());
+  }, [cityId, controlsState.period, controlsState.selectedYear]);
 
   return (
     <>
@@ -64,36 +118,106 @@ const CityPage = async ({ params }: CityPageProps) => {
         <h2 className="text-4xl font-bold">
           <div>{cityData.cityName} sightings</div>
         </h2>
-        <section className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">
-          {tickCardDataQuery.map((item, index) => (
+        <DownloadButton
+          apiUrl={`/api/data/reports?city=${cityId}`}
+          reportName={`Ticks_Sightings_${cityData.cityName.replace(/\s/g, "_")}.csv`}
+        />
+        <div className="flex justify-end">
+          <TimeControls
+            ariaDataName="UK"
+            radioGroupName="tickCards"
+            state={controlsState}
+            setState={setControlsState}
+          />
+        </div>
+        <section className="flex max-w-full gap-4">
+          {/* Unfortunately the horizontal scroll will not stop overflowing, this is a last resort */}
+          <div className="grid grid-cols-6 gap-4 no-scrollbar">
+          {data.tickCardData.map((item, index) => (
             <TickCountCard
               key={`tickCard-${item.species}-${index}-TickCountCard`}
               data={item}
             />
           ))}
+          </div>
         </section>
-        
+        <section>
+          <div className="flex bg-neutral-800 items-center gap-2 p-2 mb-2 border-b-sky-600 border-b-4">
+            <h3 className="text-2xl text-white font-semibold">Overview</h3>
+          </div>
+          <OverviewCardsCity data={data.overviewCardsData} />
+        </section>
         <TabGroup>
           <Tab label="Sightings over time">
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
-                Sightings through {currentYear}
+                <span className="block">
+                  Sightings through {controlsState.period === "max" ? "lifetime" : controlsState.selectedYear}
+                </span>
+                <span className="block text-base text-neutral-300">
+                  (Hover for more details)
+                </span>
               </h3>
               <div className="flex-1">
                 <Histogram
                   // generate date strings for each month of the year to gap-fill database results so that all months are represented
-                  data={Array.from({ length: 12 }, (_, m) => {
-                    const date = new Date(currentYear, m, 1);
-                    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
-                  }).map((date) => {
-                    const matchingData = histogramData.find(
-                      (d) => d.date === date,
-                    );
-                    return {
-                      date,
-                      count: matchingData ? matchingData.count : 0,
-                    };
-                  })}
+                  data={
+                    controlsState.period === "max"
+                      ? data.histogramData
+                      : Array.from({ length: 12 }, (_, m) => {
+                          const date = new Date(
+                            controlsState.selectedYear,
+                            m,
+                            1,
+                          );
+                          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
+                        }).map((date) => {
+                          const matchingData = data.histogramData.find(
+                            (d) => d.date === date,
+                          );
+                          return {
+                            date,
+                            count: matchingData ? matchingData.count : 0,
+                          };
+                        })
+                  }
+                />
+              </div>
+            </div>
+          </Tab>
+          <Tab label="Sightings by species">
+            <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
+              <h3 className="text-2xl text-white font-semibold">
+                <span className="block">
+                  Sightings by species through {controlsState.period === "max" ? "lifetime" : controlsState.selectedYear}
+                </span>
+                <span className="block text-base text-neutral-300">
+                  (Hover for more details)
+                </span>
+              </h3>
+              <div className="flex-1">
+                <HistogramStacked
+                  // generate date strings for each month of the year to gap-fill database results so that all months are represented
+                  data={
+                    controlsState.period === "max"
+                      ? data.stackedHistogramData
+                      : Array.from({ length: 12 }, (_, m) => {
+                          const date = new Date(
+                            controlsState.selectedYear,
+                            m,
+                            1,
+                          );
+                          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`; //* formatters are unsuitable so this needs to be done manually
+                        }).map((date) => {
+                          const matchingData = data.stackedHistogramData.find(
+                            (d) => d.date === date,
+                          );
+                          return {
+                            date,
+                            data: matchingData ? matchingData.data : [],
+                          };
+                        })
+                  }
                 />
               </div>
             </div>
