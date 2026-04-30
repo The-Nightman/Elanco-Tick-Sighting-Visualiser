@@ -135,8 +135,7 @@ const page = () => {
           />
         </div>
         <section className="flex flex-col">
-          {/* Unfortunately the horizontal scroll will not stop overflowing, this is a last resort */}
-          <div className="grid grid-cols-6 gap-4 no-scrollbar">
+          <div className="flex gap-4 overflow-x-auto pb-4 [scrollbar-color:var(--color-sky-600)_var(--color-neutral-200)]">
             {data.tickCardData.map((item, index) => (
               <TickCountCard
                 key={`tickCard-${item.species}-${index}-TickCountCard`}

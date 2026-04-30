@@ -131,14 +131,13 @@ const CityPage = () => {
           />
         </div>
         <section className="flex max-w-full gap-4">
-          {/* Unfortunately the horizontal scroll will not stop overflowing, this is a last resort */}
-          <div className="grid grid-cols-6 gap-4 no-scrollbar">
-          {data.tickCardData.map((item, index) => (
-            <TickCountCard
-              key={`tickCard-${item.species}-${index}-TickCountCard`}
-              data={item}
-            />
-          ))}
+          <div className="flex gap-4 overflow-x-auto pb-4 [scrollbar-color:var(--color-sky-600)_var(--color-neutral-200)]">
+            {data.tickCardData.map((item, index) => (
+              <TickCountCard
+                key={`tickCard-${item.species}-${index}-TickCountCard`}
+                data={item}
+              />
+            ))}
           </div>
         </section>
         <section>
@@ -152,7 +151,10 @@ const CityPage = () => {
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
                 <span className="block">
-                  Sightings through {controlsState.period === "max" ? "lifetime" : controlsState.selectedYear}
+                  Sightings through{" "}
+                  {controlsState.period === "max"
+                    ? "lifetime"
+                    : controlsState.selectedYear}
                 </span>
                 <span className="block text-base text-neutral-300">
                   (Hover for more details)
@@ -189,7 +191,10 @@ const CityPage = () => {
             <div className="w-full h-120 pt-4 pb-6 px-6 flex flex-col gap-3">
               <h3 className="text-2xl text-white font-semibold">
                 <span className="block">
-                  Sightings by species through {controlsState.period === "max" ? "lifetime" : controlsState.selectedYear}
+                  Sightings by species through{" "}
+                  {controlsState.period === "max"
+                    ? "lifetime"
+                    : controlsState.selectedYear}
                 </span>
                 <span className="block text-base text-neutral-300">
                   (Hover for more details)

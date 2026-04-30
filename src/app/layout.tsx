@@ -30,7 +30,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased max-w-full min-w-0 overflow-x-hidden`}
       >
         <header className="flex flex-row w-full justify-between px-4 py-2 border-b-4 border-sky-600 shadow-md">
           <Link href="/" className="text-3xl font-bold">
