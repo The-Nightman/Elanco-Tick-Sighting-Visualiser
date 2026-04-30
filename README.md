@@ -1,3 +1,9 @@
+# Project prerequisits
+Node [v20.9+](https://nodejs.org/)
+
+MySql [Community server 8.0.46+](https://dev.mysql.com/downloads/mysql/8.0.html)
+
+
 # Running the project
 
 1. Install packages and dependencies:
