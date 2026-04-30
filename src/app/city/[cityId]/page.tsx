@@ -130,13 +130,16 @@ const CityPage = () => {
             setState={setControlsState}
           />
         </div>
-        <section className="flex max-w-full gap-4 overflow-x-scroll no-scrollbar">
+        <section className="flex max-w-full gap-4">
+          {/* Unfortunately the horizontal scroll will not stop overflowing, this is a last resort */}
+          <div className="grid grid-cols-6 gap-4 no-scrollbar">
           {data.tickCardData.map((item, index) => (
             <TickCountCard
               key={`tickCard-${item.species}-${index}-TickCountCard`}
               data={item}
             />
           ))}
+          </div>
         </section>
         <section>
           <div className="flex bg-neutral-800 items-center gap-2 p-2 mb-2 border-b-sky-600 border-b-4">
