@@ -15,6 +15,8 @@ import { HomepageData } from "@/interfaces/HomepageData";
 import HistogramStacked from "@/components/Charts/HistogramStacked/HistogramStacked";
 import dynamic from "next/dynamic";
 
+import "leaflet/dist/leaflet.css";
+
 // The component needs to be imported like this or we will get errors about window
 // not being defined and the map just will not function correctly.
 // See: https://github.com/PaulLeCam/react-leaflet/issues/69
