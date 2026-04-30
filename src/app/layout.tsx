@@ -24,24 +24,25 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   await seedDatabase();
 
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased max-w-full min-w-0 overflow-x-hidden`}
       >
-        <header className="flex flex-row w-full justify-between px-4 py-2 border-b-4 border-sky-600 shadow-md">
-          <Link href="/" className="text-3xl font-bold">
-            ELANCO
+        <header className="grid grid-cols-3 w-full px-4 py-2 border-b-4 border-sky-600 shadow-md">
+          <Link href="/" className=" text-3xl font-bold">
+            <img src="/Elanco.svg" className="w-24" alt="Elanco" />
+            <span className="sr-only">Home page</span>
           </Link>
-          <h1 className="text-xl font-semibold">UK Tick Sightings</h1>
-          <div>
-            <span>placeholder</span>
-          </div>
+          <h1 className="justify-self-center self-center text-2xl font-semibold">
+            UK Tick Sightings
+          </h1>
         </header>
-        <main className="flex flex-col w-full min-h-screen items-center">{children}</main>
+        <main className="flex flex-col w-full min-h-screen items-center">
+          {children}
+        </main>
       </body>
     </html>
   );
