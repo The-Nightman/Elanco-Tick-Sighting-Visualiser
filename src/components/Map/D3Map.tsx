@@ -4,18 +4,24 @@ import { useState } from "react";
 import { MapSightingData } from "@/interfaces/MapSightingData";
 import MapControls from "./MapControls";
 import { MapContainer, TileLayer } from "react-leaflet";
-
+import MapSvgLayer from "./MapSvgLayer";
 import "leaflet/dist/leaflet";
-import MapBubbleLayer from "./MapSvgLayer";
 
-const width = 800;
+// const width = 800;
 const height = 600;
 
 const D3Map = () => {
-  const [sightingData, setSightingData] = useState<MapSightingData[]>([]);
+  const [sightingData, setSightingData] = useState<{
+    data: MapSightingData[];
+    viewBySpecies: boolean;
+  }>({ data: [], viewBySpecies: false });
 
   return (
-    <div id="map" className={`relative xl:flex w-full h-[${height}px] max-h-[${height}px] max-w-full`}>
+    <div
+      id="map"
+      className={`relative xl:flex w-full max-w-full`}
+      style={{ height: `${height}px`, maxHeight: `${height}px` }} // Unexpected problems of the map having no height appeared randomly so now we use this
+    >
       <MapContainer
         center={[54.093409, -2.89479]}
         scrollWheelZoom={true}
@@ -25,7 +31,7 @@ const D3Map = () => {
           attribution="&copy; OpenStreetMap contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <MapBubbleLayer sightingData={sightingData} />
+        <MapSvgLayer sightingData={sightingData} />
       </MapContainer>
       <MapControls setMapData={setSightingData} />
     </div>
